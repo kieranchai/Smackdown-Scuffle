@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81abdb92502394c499694fbaa4cb8932, type: 3}
+  m_Name: Example Magic
+  m_EditorClassIdentifier: 
+  Name: SPECIAL
+  Icon: {fileID: 21300000, guid: 14a5a932e059698498d16fd57a7366f2, type: 3}
+  Crosshair: {fileID: 21300000, guid: ba16794c4f5dbf040bfab3ccb19d0ec5, type: 3}
+  Type: 2
+  Prefab: {fileID: 6951451265904954555, guid: 3e19b261abcfda94599d273c5bd94bad, type: 3}
+  AttackRange: 15
+  LightAttackDelay: 0
+  LightAttackCooldown: 0.5
+  LightAttackDamage: 1
+  LightHitEffect: {fileID: 0}
+  LightAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
+  LightImpactSFX: {fileID: 0}
+  MediumAttackDelay: 0
+  MediumAttackCooldown: 1
+  MediumAttackDamage: 2
+  MediumHitEffect: {fileID: 0}
+  MediumAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
+  MediumImpactSFX: {fileID: 0}
+  HeavyAttackDelay: 0
+  HeavyAttackCooldown: 2
+  HeavyAttackDamage: 3
+  HeavyHitEffect: {fileID: 0}
+  HeavyAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
+  HeavyImpactSFX: {fileID: 0}
+  LightAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
+  MediumAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
+  HeavyAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
+  LightPrefab: {fileID: 4147605628339885743, guid: 0c480ea916bec9d42928387fcf0489aa, type: 3}
+  MediumPrefab: {fileID: 4147605628339885743, guid: 0c480ea916bec9d42928387fcf0489aa, type: 3}
+  HeavyPrefab: {fileID: 4147605628339885743, guid: 0c480ea916bec9d42928387fcf0489aa, type: 3}
+  LightSpecialCDTimer: 0.5000301
+  MediumSpecialCDTimer: 1.0010182
+  HeavySpecialCDTimer: 2.0013905
