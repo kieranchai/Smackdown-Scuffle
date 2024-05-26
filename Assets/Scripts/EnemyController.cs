@@ -36,6 +36,7 @@ public class EnemyController : MonoBehaviour
     public Animator EnemyAnimator;
     public GameObject EnemyPrefab;
     public GameObject SpawnParticles;
+    public Rigidbody EnemyRigidBody;
 
     private void OnEnable()
     {
@@ -78,6 +79,11 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public void Knockback(Vector3 direction)
+    {
+        EnemyRigidBody.AddForce(direction * 5f, ForceMode.Impulse);
+    }
+
     public void DealDamage(AttackStrength strength)
     {
         if (CurrentHealth > 0)
@@ -106,6 +112,7 @@ public class EnemyController : MonoBehaviour
     public void Die()
     {
         GetComponent<AudioSource>().Stop();
+        EnemyRigidBody.isKinematic = true;
         GetComponent<CapsuleCollider>().enabled = false;
         EnemyAnimator.Play(DeathAnim.name, -1, 0);
         GetComponent<AudioSource>().PlayOneShot(DeathSFX);
@@ -114,7 +121,9 @@ public class EnemyController : MonoBehaviour
 
     public void Respawn()
     {
-        Instantiate(EnemyPrefab, transform.position, transform.rotation);
+        GameObject enemy = Instantiate(EnemyPrefab, transform.position, transform.rotation);
+        enemy.GetComponent<Rigidbody>().isKinematic = false;
+
         Destroy(this.gameObject);
     }
 }

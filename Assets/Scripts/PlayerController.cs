@@ -402,6 +402,7 @@ public class PlayerController : MonoBehaviour
                 switch (strength)
                 {
                     case AttackStrength.Light:
+                        enemy.Knockback(transform.forward);
                         enemy.TakeDamage(EquippedWeapon.LightAttackDamage, strength);
                         break;
                     case AttackStrength.Medium:
@@ -497,6 +498,27 @@ public class PlayerController : MonoBehaviour
                         enemy.TakeDamage(EquippedWeapon.HeavyAttackDamage, strength);
                         break;
                 }
+            }
+            switch (strength)
+            {
+                case AttackStrength.Light:
+                    if (EquippedWeapon.LightImpactSFX != null)
+                        AS.PlayOneShot(EquippedWeapon.LightImpactSFX);
+                    if (EquippedWeapon.LightHitEffect != null)
+                        Instantiate(EquippedWeapon.LightHitEffect, hit.point, Quaternion.identity);
+                    break;
+                case AttackStrength.Medium:
+                    if (EquippedWeapon.MediumImpactSFX != null)
+                        AS.PlayOneShot(EquippedWeapon.MediumImpactSFX);
+                    if (EquippedWeapon.MediumHitEffect != null)
+                        Instantiate(EquippedWeapon.MediumHitEffect, hit.point, Quaternion.identity);
+                    break;
+                case AttackStrength.Heavy:
+                    if (EquippedWeapon.HeavyImpactSFX != null)
+                        AS.PlayOneShot(EquippedWeapon.HeavyImpactSFX);
+                    if (EquippedWeapon.HeavyHitEffect != null)
+                        Instantiate(EquippedWeapon.HeavyHitEffect, hit.point, Quaternion.identity);
+                    break;
             }
         }
     }

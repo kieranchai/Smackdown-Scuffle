@@ -19,7 +19,7 @@ MonoBehaviour:
   Prefab: {fileID: 6260546851229354781, guid: ae9dc0ffba8307c4a89072dd3cca3d33, type: 3}
   AttackRange: 0.2
   LightAttackDelay: 0
-  LightAttackCooldown: 0.5
+  LightAttackCooldown: 10
   LightAttackDamage: 1
   LightHitEffect: {fileID: 0}
   LightAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
@@ -39,6 +39,6 @@ MonoBehaviour:
   LightAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
   MediumAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
   HeavyAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
-  LightSpecialCDTimer: 0
-  MediumSpecialCDTimer: 0
-  HeavySpecialCDTimer: 0
+  LightSpecialCDTimer: 0.9360908
+  MediumSpecialCDTimer: 0.9360908
+  HeavySpecialCDTimer: 0.9360908
