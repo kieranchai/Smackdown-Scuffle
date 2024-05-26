@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,12 +12,18 @@ public class PlayerController : MonoBehaviour
     public float Gravity = -9.81f;
     public float JumpStrength = 1.5f;
     public bool IsGrounded;
+    public bool isJumping;
+    private Vector3 inputVelocity;
     public Vector3 Velocity;
+    public bool canMove = true;
+    public bool canTurn = true;
 
     [Header("Combat")]
     public int MaxHealth = 10;
     public int CurrentHealth = 10;
     public bool IsAttacking;
+    public bool isUsingSpecial = false;
+    public bool hitObstacle = false;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -26,15 +33,23 @@ public class PlayerController : MonoBehaviour
     public GameObject SpecialAnchor;
 
     [Header("Camera")]
-    public GameObject CameraRig;
-    public Camera PlayerCamera;
+    public GameObject FPCameraRig;
+    public Camera FPCamera;
+    public GameObject TPCameraRig;
+    public GameObject PlayerHead;
+    public Camera TPCamera;
+    public Camera DeathCamera;
     public float Sensitivity;
 
     [Header("Animations")]
     public AnimationClip LightDamageAnim;
     public AnimationClip MediumDamageAnim;
     public AnimationClip HeavyDamageAnim;
+    public AnimationClip RunningAnim;
+    public AnimationClip RunningJumpAnim;
+    public AnimationClip JumpingAnim;
     public AnimationClip DeathAnim;
+    public AnimationClip ChargingAnim;
 
     [Header("Sound Effects")]
     public AudioClip LightDamageSFX;
@@ -102,6 +117,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
+        if (IsGrounded) isJumping = false;
     }
 
     private void LateUpdate()
@@ -176,32 +192,50 @@ public class PlayerController : MonoBehaviour
 
     private void CameraLook()
     {
+        if (!canTurn) return;
+        if (DeathCamera.enabled) return;
+
         //Grab the movement values from our Control's mouseLook config
         float mouseX = Controls.Look.ReadValue<Vector2>().x;
         float mouseY = Controls.Look.ReadValue<Vector2>().y;
 
         //Store our vertical rotation movement into a value to apply to transform
         xRotation -= (mouseY * Time.deltaTime) * Sensitivity;
-        xRotation = Mathf.Clamp(xRotation, -80f, 85f);
+
+        if (TPCamera.enabled) xRotation = Mathf.Clamp(xRotation, -40f, 40f);
+        else xRotation = Mathf.Clamp(xRotation, -80f, 85f);
 
         //Apply our transforms to both our camera (vertical) and our player (horizontal)
-        CameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        FPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        TPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        PlayerHead.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * Sensitivity);
     }
 
     private void MovePlayer()
     {
+        if (!canMove) return;
+
         //Grab our WASD input as a vector2 and normalize it with our transform
         Vector2 controlAxis = Controls.Movement.ReadValue<Vector2>();
         Vector3 inputDir = new Vector3(controlAxis.x, 0, controlAxis.y);
-        Vector3 inputVelocity = transform.TransformDirection(inputDir.normalized);
+        inputVelocity = transform.TransformDirection(inputDir.normalized);
 
         //Add velocity each frame
         Velocity.y += Gravity * Time.deltaTime;
+        if (IsGrounded)
+        {
+            if (Velocity.y < 0) Velocity.y = _Gravity / 2;
+            if (inputVelocity != Vector3.zero && !isJumping)
+            {
+                PA.Play(RunningAnim.name);
+            }
 
-        //If we're grounded, apply a constant downwards force of baseGravity / 2 for slopes.
-        if (IsGrounded && Velocity.y < 0)
-            Velocity.y = _Gravity / 2;
+            if (inputVelocity == Vector3.zero && !isJumping)
+            {
+                PA.Play("Idle");
+            }
+        }
 
         //Apply our movements
         CC.Move((inputVelocity * MoveSpeed) * Time.deltaTime + //PlayerInput Movement
@@ -214,8 +248,18 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (!canMove) return;
+
         if (IsGrounded)
+        {
+            isJumping = true;
+            if (inputVelocity != Vector3.zero)
+            {
+                PA.Play(RunningJumpAnim.name);
+            }
+            else PA.Play(JumpingAnim.name);
             Velocity.y = JumpStrength;
+        }
     }
 
     #endregion
@@ -224,6 +268,8 @@ public class PlayerController : MonoBehaviour
 
     public void EquipWeapon(Weapon weapon)
     {
+        if (isUsingSpecial) return;
+
         if (EquippedWeaponModel != null)
             Destroy(EquippedWeaponModel);
 
@@ -235,19 +281,28 @@ public class PlayerController : MonoBehaviour
         switch (weapon.Type)
         {
             case WeaponType.Melee:
+                FPCamera.enabled = true;
+                TPCamera.enabled = false;
+                transform.Find("IK").GetComponent<Rig>().weight = 1f;
                 EquippedWeaponModel = Instantiate(weapon.Prefab, MeleeAnchor.transform);
                 break;
             case WeaponType.Ranged:
+                FPCamera.enabled = true;
+                TPCamera.enabled = false;
+                transform.Find("IK").GetComponent<Rig>().weight = 1f;
                 EquippedWeaponModel = Instantiate(weapon.Prefab, RangedAnchor.transform);
                 break;
             case WeaponType.Special:
+                TPCamera.enabled = true;
+                FPCamera.enabled = false;
+                transform.Find("IK").GetComponent<Rig>().weight = 0f;
                 EquippedWeaponModel = Instantiate(weapon.Prefab, SpecialAnchor.transform);
                 break;
         }
 
-        EquippedWeaponModel.transform.localScale = Vector3.one;
-        EquippedWeaponModel.transform.localPosition = Vector3.zero;
-        EquippedWeaponModel.transform.localRotation = Quaternion.identity;
+        //EquippedWeaponModel.transform.localScale = Vector3.one;
+        //EquippedWeaponModel.transform.localPosition = Vector3.zero;
+        //EquippedWeaponModel.transform.localRotation = Quaternion.identity;
 
         HUD.SwitchHUD(weapon.Type);
 
@@ -288,8 +343,12 @@ public class PlayerController : MonoBehaviour
     {
         if (IsAttacking || EquippedWeapon == null) return;
 
+        if (EquippedWeapon.Type == WeaponType.Special && !IsGrounded) return;
+
         if (EquippedWeapon.ExpendResource(AttackStrength.Light))
         {
+            if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
+
             IsAttacking = true;
             EquippedWeapon.PerformLightAttack(this);
 
@@ -335,7 +394,7 @@ public class PlayerController : MonoBehaviour
     public System.Collections.IEnumerator TargetImpact(AttackStrength strength, float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out RaycastHit hit, EquippedWeapon.AttackRange))
+        if (Physics.Raycast(FPCamera.transform.position, FPCamera.transform.forward, out RaycastHit hit, EquippedWeapon.AttackRange))
         {
             EnemyController enemy = hit.collider.GetComponent<EnemyController>();
             if (enemy != null)
@@ -377,35 +436,91 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public System.Collections.IEnumerator CastSpecial(AttackStrength strength, GameObject attackPrefab, float delay)
+    public System.Collections.IEnumerator CastSpecial(AttackStrength strength, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Debug.Log("Casting Special");
-        var Special = Instantiate(attackPrefab, SpecialAnchor.transform.position, Quaternion.identity);
-        Special.GetComponent<SpecialProjectile>().Strength = strength;
         switch (strength)
         {
             case AttackStrength.Light:
-                Special.GetComponent<SpecialProjectile>().Damage = EquippedWeapon.LightAttackDamage;
-                Special.GetComponent<SpecialProjectile>().LifeSpan = EquippedWeapon.LightAttackCooldown;
+                StartCoroutine(ForwardCharge());
                 break;
-
             case AttackStrength.Medium:
-                Special.GetComponent<SpecialProjectile>().Damage = EquippedWeapon.MediumAttackDamage;
-                Special.GetComponent<SpecialProjectile>().LifeSpan = EquippedWeapon.MediumAttackCooldown;
                 break;
 
             case AttackStrength.Heavy:
-                Special.GetComponent<SpecialProjectile>().Damage = EquippedWeapon.HeavyAttackDamage;
-                Special.GetComponent<SpecialProjectile>().LifeSpan = EquippedWeapon.HeavyAttackCooldown;
                 break;
         }
+    }
+
+    public System.Collections.IEnumerator ForwardCharge()
+    {
+        canMove = false;
+        canTurn = false;
+        Velocity = Vector3.zero;
+        float chargeTime = 0f;
+        PA.Play(ChargingAnim.name);
+        while (!hitObstacle && chargeTime < 0.5f)
+        {
+            CC.Move(transform.forward * 13f * Time.deltaTime);
+            CheckSpecialHit(AttackStrength.Light);
+            chargeTime += Time.deltaTime;
+            yield return null;
+        }
+        EndSpecialAttack();
+    }
+
+/*    void OnDrawGizmos()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position + CC.center, CC.height / 2);
+    }*/
+
+    public void CheckSpecialHit(AttackStrength strength)
+    {
+        if (Physics.SphereCast(transform.position + CC.center, CC.height/2, transform.forward, out RaycastHit hit, 0.2f))
+        {
+            hitObstacle = true;
+            Velocity = Vector3.zero;
+            EnemyController enemy = hit.collider.GetComponent<EnemyController>();
+            if (enemy != null)
+            {
+                switch (strength)
+                {
+                    case AttackStrength.Light:
+                        enemy.TakeDamage(EquippedWeapon.LightAttackDamage, strength);
+                        break;
+                    case AttackStrength.Medium:
+                        enemy.TakeDamage(EquippedWeapon.MediumAttackDamage, strength);
+                        break;
+                    case AttackStrength.Heavy:
+                        enemy.TakeDamage(EquippedWeapon.HeavyAttackDamage, strength);
+                        break;
+                }
+            }
+        }
+    }
+
+    public void EndSpecialAttack()
+    {
+        canMove = true;
+        canTurn = true;
+        hitObstacle = false;
+        isUsingSpecial = false;
+        PA.Play("Idle");
     }
 
     public void PlayAnimation(AnimationClip clip)
     {
         if (EquippedWeaponModel != null && clip != null)
+        {
+            if (EquippedWeapon.Type == WeaponType.Special)
+            {
+                /*                PA.Play(ChargingAnim.name);*/
+                return;
+            }
             EquippedWeaponModel.GetComponent<Animator>().Play(clip.name);
+        }
     }
 
     public System.Collections.IEnumerator ResetAttackAfterDelay(float delay)
@@ -462,7 +577,7 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        HUD.UpdateHPBars(); 
+        HUD.UpdateHPBars();
 
         if (CurrentHealth == 0)
             Die();
@@ -485,6 +600,9 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         this.enabled = false;
+        TPCamera.enabled = false;
+        FPCamera.enabled = false;
+        DeathCamera.enabled = true;
         AS.PlayOneShot(DeathSFX);
         PA.Play(DeathAnim.name);
         Invoke("ResetScene", 2f);

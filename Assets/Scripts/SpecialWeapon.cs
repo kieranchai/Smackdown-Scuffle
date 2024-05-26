@@ -4,11 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Special Weapon", menuName = "Weapons/Special Weapon")]
 public class SpecialWeapon : Weapon
 {
-    [Header("Special Properties")]
-    public GameObject LightPrefab;
-    public GameObject MediumPrefab;
-    public GameObject HeavyPrefab;
-
     public float LightSpecialCDTimer = 0f;
     public float MediumSpecialCDTimer = 0f;
     public float HeavySpecialCDTimer = 0f;
@@ -24,21 +19,21 @@ public class SpecialWeapon : Weapon
     {
         player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
         player.PlayAnimation(LightAttackAnim);
-        player.StartCoroutine(player.CastSpecial(AttackStrength.Light, LightPrefab, LightAttackDelay));
+        player.StartCoroutine(player.CastSpecial(AttackStrength.Light, LightAttackDelay));
     }
 
     public override void PerformMediumAttack(PlayerController player)
     {
         player.GetComponent<AudioSource>().PlayOneShot(MediumAttackSFX);
         player.PlayAnimation(MediumAttackAnim);
-        player.StartCoroutine(player.CastSpecial(AttackStrength.Medium, MediumPrefab, MediumAttackDelay));
+        player.StartCoroutine(player.CastSpecial(AttackStrength.Medium, MediumAttackDelay));
     }
 
     public override void PerformHeavyAttack(PlayerController player)
     {
         player.PlayAnimation(HeavyAttackAnim);
         player.GetComponent<AudioSource>().PlayOneShot(HeavyAttackSFX);
-        player.StartCoroutine(player.CastSpecial(AttackStrength.Heavy, HeavyPrefab, HeavyAttackDelay));
+        player.StartCoroutine(player.CastSpecial(AttackStrength.Heavy, HeavyAttackDelay));
     }
 
     public override bool ExpendResource(AttackStrength strength)
