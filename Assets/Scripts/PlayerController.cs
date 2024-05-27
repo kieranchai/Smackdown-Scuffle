@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     public bool IsAttacking;
     public bool isUsingSpecial = false;
     public bool hitObstacle = false;
+    public bool isStunned = false;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -56,6 +57,10 @@ public class PlayerController : MonoBehaviour
     public AudioClip MediumDamageSFX;
     public AudioClip HeavyDamageSFX;
     public AudioClip DeathSFX;
+
+    [Header("Particle Effects")]
+    public ParticleSystem DustParticles;
+    public ParticleSystem MotionTrail;
 
     [Header("Debug Properties")]
     public List<DebugWarpParams> WarpPoints = new List<DebugWarpParams>();
@@ -233,7 +238,7 @@ public class PlayerController : MonoBehaviour
 
             if (inputVelocity == Vector3.zero && !isJumping)
             {
-                PA.Play("Idle");
+                if (CC.velocity != Vector3.zero) PA.Play("RunToStop");
             }
         }
 
@@ -458,24 +463,38 @@ public class PlayerController : MonoBehaviour
         canMove = false;
         canTurn = false;
         Velocity = Vector3.zero;
+
         float chargeTime = 0f;
         PA.Play(ChargingAnim.name);
+        DustParticles.Play();
+        MotionTrail.Play();
         while (!hitObstacle && chargeTime < 0.5f)
         {
-            CC.Move(transform.forward * 13f * Time.deltaTime);
+            CC.Move(transform.forward * 16f * Time.deltaTime);
             CheckSpecialHit(AttackStrength.Light);
             chargeTime += Time.deltaTime;
             yield return null;
         }
+        DustParticles.Stop();
+        MotionTrail.Stop();
+        if (isStunned) yield return Stunned();
         EndSpecialAttack();
     }
 
-/*    void OnDrawGizmos()
+    public System.Collections.IEnumerator Stunned()
     {
-        // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position + CC.center, CC.height / 2);
-    }*/
+        PA.Play("Stunned");
+        yield return new WaitForSeconds(2.0f);
+        PA.Play("GetUp");
+        yield return new WaitForSeconds(2.0f);
+    }
+
+    /*    void OnDrawGizmos()
+        {
+            // Draw a yellow sphere at the transform's position
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(transform.position + CC.center, CC.height / 2);
+        }*/
 
     public void CheckSpecialHit(AttackStrength strength)
     {
@@ -483,6 +502,7 @@ public class PlayerController : MonoBehaviour
         {
             hitObstacle = true;
             Velocity = Vector3.zero;
+            isStunned = true;
             EnemyController enemy = hit.collider.GetComponent<EnemyController>();
             if (enemy != null)
             {
@@ -529,7 +549,8 @@ public class PlayerController : MonoBehaviour
         canTurn = true;
         hitObstacle = false;
         isUsingSpecial = false;
-        PA.Play("Idle");
+        isStunned = false;
+/*        PA.Play("Idle");*/
     }
 
     public void PlayAnimation(AnimationClip clip)
