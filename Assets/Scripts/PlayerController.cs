@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
-using UnityEngine.Animations.Rigging;
 
 public class PlayerController : MonoBehaviour
 {
@@ -34,11 +33,9 @@ public class PlayerController : MonoBehaviour
     public GameObject SpecialAnchor;
 
     [Header("Camera")]
-    public GameObject FPCameraRig;
-    public Camera FPCamera;
-    public GameObject TPCameraRig;
+    public GameObject CameraRig;
+    public Camera PlayerCamera;
     public GameObject PlayerHead;
-    public Camera TPCamera;
     public Camera DeathCamera;
     public float Sensitivity;
 
@@ -58,10 +55,6 @@ public class PlayerController : MonoBehaviour
     public AudioClip HeavyDamageSFX;
     public AudioClip DeathSFX;
 
-    [Header("Particle Effects")]
-    public ParticleSystem DustParticles;
-    public ParticleSystem MotionTrail;
-
     [Header("Debug Properties")]
     public List<DebugWarpParams> WarpPoints = new List<DebugWarpParams>();
     public KeyCode HealKey;
@@ -70,7 +63,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public PlayerControls.BasicActions Controls;
     private GameObject EquippedWeaponModel;
-    private CharacterController CC;
+    public CharacterController CC;
     private PlayerControls PC;
     private AudioSource AS;
     private HUDManager HUD;
@@ -207,12 +200,12 @@ public class PlayerController : MonoBehaviour
         //Store our vertical rotation movement into a value to apply to transform
         xRotation -= (mouseY * Time.deltaTime) * Sensitivity;
 
-        if (TPCamera.enabled) xRotation = Mathf.Clamp(xRotation, -40f, 40f);
-        else xRotation = Mathf.Clamp(xRotation, -80f, 85f);
+/*        if (TPCamera.enabled) xRotation = Mathf.Clamp(xRotation, -40f, 40f);
+        else */xRotation = Mathf.Clamp(xRotation, -80f, 85f);
 
         //Apply our transforms to both our camera (vertical) and our player (horizontal)
-        FPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        TPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        CameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+/*        TPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);*/
         PlayerHead.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * Sensitivity);
     }
@@ -286,21 +279,12 @@ public class PlayerController : MonoBehaviour
         switch (weapon.Type)
         {
             case WeaponType.Melee:
-                FPCamera.enabled = true;
-                TPCamera.enabled = false;
-                transform.Find("IK").GetComponent<Rig>().weight = 1f;
                 EquippedWeaponModel = Instantiate(weapon.Prefab, MeleeAnchor.transform);
                 break;
             case WeaponType.Ranged:
-                FPCamera.enabled = true;
-                TPCamera.enabled = false;
-                transform.Find("IK").GetComponent<Rig>().weight = 1f;
                 EquippedWeaponModel = Instantiate(weapon.Prefab, RangedAnchor.transform);
                 break;
             case WeaponType.Special:
-                TPCamera.enabled = true;
-                FPCamera.enabled = false;
-                transform.Find("IK").GetComponent<Rig>().weight = 0f;
                 EquippedWeaponModel = Instantiate(weapon.Prefab, SpecialAnchor.transform);
                 break;
         }
@@ -399,7 +383,7 @@ public class PlayerController : MonoBehaviour
     public System.Collections.IEnumerator TargetImpact(AttackStrength strength, float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (Physics.Raycast(FPCamera.transform.position, FPCamera.transform.forward, out RaycastHit hit, EquippedWeapon.AttackRange))
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out RaycastHit hit, EquippedWeapon.AttackRange))
         {
             EnemyController enemy = hit.collider.GetComponent<EnemyController>();
             if (enemy != null)
@@ -463,11 +447,10 @@ public class PlayerController : MonoBehaviour
         canMove = false;
         canTurn = false;
         Velocity = Vector3.zero;
-
+        PlayerCamera.enabled = false;
+        DeathCamera.enabled = true;
         float chargeTime = 0f;
         PA.Play(ChargingAnim.name);
-        DustParticles.Play();
-        MotionTrail.Play();
         while (!hitObstacle && chargeTime < 0.5f)
         {
             CC.Move(transform.forward * 16f * Time.deltaTime);
@@ -475,8 +458,6 @@ public class PlayerController : MonoBehaviour
             chargeTime += Time.deltaTime;
             yield return null;
         }
-        DustParticles.Stop();
-        MotionTrail.Stop();
         if (isStunned) yield return Stunned();
         EndSpecialAttack();
     }
@@ -547,10 +528,11 @@ public class PlayerController : MonoBehaviour
     {
         canMove = true;
         canTurn = true;
+        PlayerCamera.enabled = true;
+        DeathCamera.enabled = false;
         hitObstacle = false;
         isUsingSpecial = false;
         isStunned = false;
-/*        PA.Play("Idle");*/
     }
 
     public void PlayAnimation(AnimationClip clip)
@@ -559,8 +541,12 @@ public class PlayerController : MonoBehaviour
         {
             if (EquippedWeapon.Type == WeaponType.Special)
             {
-                /*                PA.Play(ChargingAnim.name);*/
                 return;
+            }
+
+            if (EquippedWeapon.Type == WeaponType.Melee)
+            {
+                EquippedWeaponModel.GetComponent<ChairEvents>().player = this;
             }
             EquippedWeaponModel.GetComponent<Animator>().Play(clip.name);
         }
@@ -643,8 +629,7 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         this.enabled = false;
-        TPCamera.enabled = false;
-        FPCamera.enabled = false;
+        PlayerCamera.enabled = false;
         DeathCamera.enabled = true;
         AS.PlayOneShot(DeathSFX);
         PA.Play(DeathAnim.name);
