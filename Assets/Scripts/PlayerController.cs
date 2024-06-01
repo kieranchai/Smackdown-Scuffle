@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour
     public bool IsAttacking;
     public bool isUsingSpecial = false;
     public bool hitObstacle = false;
-    public bool isStunned = false;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -43,11 +42,7 @@ public class PlayerController : MonoBehaviour
     public AnimationClip LightDamageAnim;
     public AnimationClip MediumDamageAnim;
     public AnimationClip HeavyDamageAnim;
-    public AnimationClip RunningAnim;
-    public AnimationClip RunningJumpAnim;
-    public AnimationClip JumpingAnim;
     public AnimationClip DeathAnim;
-    public AnimationClip ChargingAnim;
 
     [Header("Sound Effects")]
     public AudioClip LightDamageSFX;
@@ -224,15 +219,6 @@ public class PlayerController : MonoBehaviour
         if (IsGrounded)
         {
             if (Velocity.y < 0) Velocity.y = _Gravity / 2;
-            if (inputVelocity != Vector3.zero && !isJumping)
-            {
-                PA.Play(RunningAnim.name);
-            }
-
-            if (inputVelocity == Vector3.zero && !isJumping)
-            {
-                if (CC.velocity != Vector3.zero) PA.Play("RunToStop");
-            }
         }
 
         //Apply our movements
@@ -251,11 +237,6 @@ public class PlayerController : MonoBehaviour
         if (IsGrounded)
         {
             isJumping = true;
-            if (inputVelocity != Vector3.zero)
-            {
-                PA.Play(RunningJumpAnim.name);
-            }
-            else PA.Play(JumpingAnim.name);
             Velocity.y = JumpStrength;
         }
     }
@@ -318,7 +299,6 @@ public class PlayerController : MonoBehaviour
             {
                 case WeaponType.Melee:
                     ((MeleeWeapon)EquippedWeapon).RegenerateStamina();
-
                     break;
                 case WeaponType.Special:
                     ((SpecialWeapon)EquippedWeapon).UpdateCooldowns();
@@ -447,27 +427,16 @@ public class PlayerController : MonoBehaviour
         canMove = false;
         canTurn = false;
         Velocity = Vector3.zero;
-        PlayerCamera.enabled = false;
-        DeathCamera.enabled = true;
         float chargeTime = 0f;
-        PA.Play(ChargingAnim.name);
         while (!hitObstacle && chargeTime < 0.5f)
         {
-            CC.Move(transform.forward * 16f * Time.deltaTime);
+            CC.Move(transform.forward * 18f * Time.deltaTime);
             CheckSpecialHit(AttackStrength.Light);
             chargeTime += Time.deltaTime;
             yield return null;
         }
-        if (isStunned) yield return Stunned();
+        EquippedWeaponModel.GetComponent<Animator>().Play("End Light");
         EndSpecialAttack();
-    }
-
-    public System.Collections.IEnumerator Stunned()
-    {
-        PA.Play("Stunned");
-        yield return new WaitForSeconds(2.0f);
-        PA.Play("GetUp");
-        yield return new WaitForSeconds(2.0f);
     }
 
     /*    void OnDrawGizmos()
@@ -483,7 +452,6 @@ public class PlayerController : MonoBehaviour
         {
             hitObstacle = true;
             Velocity = Vector3.zero;
-            isStunned = true;
             EnemyController enemy = hit.collider.GetComponent<EnemyController>();
             if (enemy != null)
             {
@@ -528,22 +496,14 @@ public class PlayerController : MonoBehaviour
     {
         canMove = true;
         canTurn = true;
-        PlayerCamera.enabled = true;
-        DeathCamera.enabled = false;
         hitObstacle = false;
         isUsingSpecial = false;
-        isStunned = false;
     }
 
     public void PlayAnimation(AnimationClip clip)
     {
         if (EquippedWeaponModel != null && clip != null)
         {
-            if (EquippedWeapon.Type == WeaponType.Special)
-            {
-                return;
-            }
-
             if (EquippedWeapon.Type == WeaponType.Melee)
             {
                 EquippedWeaponModel.GetComponent<ChairEvents>().player = this;

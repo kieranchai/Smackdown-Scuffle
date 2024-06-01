@@ -41,7 +41,7 @@ MonoBehaviour:
   HeavyAttackAnim: {fileID: 7400000, guid: 85b6a55d0d7d9684788d341be0eb0a2b, type: 2}
   StaminaRegenRate: 15
   MaxStamina: 100
-  CurrentStamina: 100.0328
+  CurrentStamina: 100.0429
   LightStaminaCost: 10
   MediumStaminaCost: 20
   HeavyStaminaCost: 35
