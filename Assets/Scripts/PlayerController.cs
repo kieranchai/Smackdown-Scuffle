@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     public bool IsAttacking;
     public bool isUsingSpecial = false;
     public bool hitObstacle = false;
+    public GameObject tagTeamerPrefab;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -51,7 +52,6 @@ public class PlayerController : MonoBehaviour
     public AudioClip DeathSFX;
 
     [Header("Debug Properties")]
-    public List<DebugWarpParams> WarpPoints = new List<DebugWarpParams>();
     public KeyCode HealKey;
     public int DebugHealAmount = 1;
 
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     private GameObject EquippedWeaponModel;
     public CharacterController CC;
     private PlayerControls PC;
-    private AudioSource AS;
+    public AudioSource AS;
     private HUDManager HUD;
     private Animator PA;
     float xRotation;
@@ -122,30 +122,6 @@ public class PlayerController : MonoBehaviour
 
     private void GetDebugInputs()
     {
-        foreach (var entry in WarpPoints)
-        {
-            GameObject playerWarp = entry.playerWarpPoint;
-            GameObject enemyWarp = entry.enemyWarpPoint;
-            KeyCode keyCode = entry.warpKey;
-
-            if (Input.GetKeyDown(keyCode))
-            {
-                var EC = FindObjectOfType<EnemyController>();
-
-                CC.enabled = false;
-                CC.transform.position = playerWarp.transform.position;
-                CC.transform.forward = playerWarp.transform.forward;
-                CC.enabled = true;
-
-                EC.transform.position = enemyWarp.transform.position;
-                EC.transform.transform.forward = enemyWarp.transform.forward;
-
-                Debug.Log("Warped to " + playerWarp.gameObject.name);
-
-                return;
-            }
-        }
-
         if (Input.GetKeyDown(HealKey))
         {
             HealPlayer(DebugHealAmount);
@@ -195,12 +171,13 @@ public class PlayerController : MonoBehaviour
         //Store our vertical rotation movement into a value to apply to transform
         xRotation -= (mouseY * Time.deltaTime) * Sensitivity;
 
-/*        if (TPCamera.enabled) xRotation = Mathf.Clamp(xRotation, -40f, 40f);
-        else */xRotation = Mathf.Clamp(xRotation, -80f, 85f);
+        /*        if (TPCamera.enabled) xRotation = Mathf.Clamp(xRotation, -40f, 40f);
+                else */
+        xRotation = Mathf.Clamp(xRotation, -80f, 85f);
 
         //Apply our transforms to both our camera (vertical) and our player (horizontal)
         CameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-/*        TPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);*/
+        /*        TPCameraRig.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);*/
         PlayerHead.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * Sensitivity);
     }
@@ -334,6 +311,8 @@ public class PlayerController : MonoBehaviour
 
         if (EquippedWeapon.ExpendResource(AttackStrength.Medium))
         {
+            if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
+
             IsAttacking = true;
             EquippedWeapon.PerformMediumAttack(this);
 
@@ -362,7 +341,7 @@ public class PlayerController : MonoBehaviour
 
     public System.Collections.IEnumerator TargetImpact(AttackStrength strength, float delay)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out RaycastHit hit, EquippedWeapon.AttackRange))
         {
             EnemyController enemy = hit.collider.GetComponent<EnemyController>();
@@ -415,11 +394,28 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(ForwardCharge());
                 break;
             case AttackStrength.Medium:
+                StartCoroutine(TagTeam());
                 break;
-
             case AttackStrength.Heavy:
                 break;
         }
+    }
+
+    public bool GetShootHitPos(out RaycastHit hit)
+    {
+        return Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit);
+    }
+
+    public System.Collections.IEnumerator TagTeam()
+    {
+        RaycastHit hit;
+        if (GetShootHitPos(out hit))
+        {
+            GameObject tagTeamer = Instantiate(tagTeamerPrefab, hit.point + new Vector3(0, 10f, 0f), transform.rotation);
+        }
+
+        EndSpecialAttack();
+        yield return null;
     }
 
     public System.Collections.IEnumerator ForwardCharge()
@@ -439,16 +435,16 @@ public class PlayerController : MonoBehaviour
         EndSpecialAttack();
     }
 
-    /*    void OnDrawGizmos()
-        {
-            // Draw a yellow sphere at the transform's position
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(transform.position + CC.center, CC.height / 2);
-        }*/
+/*    void OnDrawGizmos()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(PlayerCamera.transform.position, 2.5f);
+    }*/
 
     public void CheckSpecialHit(AttackStrength strength)
     {
-        if (Physics.SphereCast(transform.position + CC.center, CC.height/2, transform.forward, out RaycastHit hit, 0.2f))
+        if (Physics.SphereCast(transform.position + CC.center, CC.height / 2, transform.forward, out RaycastHit hit, 0.2f))
         {
             hitObstacle = true;
             Velocity = Vector3.zero;
@@ -504,12 +500,16 @@ public class PlayerController : MonoBehaviour
     {
         if (EquippedWeaponModel != null && clip != null)
         {
-            if (EquippedWeapon.Type == WeaponType.Melee)
-            {
-                EquippedWeaponModel.GetComponent<ChairEvents>().player = this;
-            }
             EquippedWeaponModel.GetComponent<Animator>().Play(clip.name);
         }
+    }
+
+    public void InitialiseChairScript(AttackStrength strength, int damage)
+    {
+        EquippedWeaponModel.GetComponent<ChairEvents>().player = this;
+        EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().player = this;
+        EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().strength = strength;
+        EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().damage = damage;
     }
 
     public System.Collections.IEnumerator ResetAttackAfterDelay(float delay)

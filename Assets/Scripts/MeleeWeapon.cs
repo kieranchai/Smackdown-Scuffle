@@ -20,6 +20,7 @@ public class MeleeWeapon : Weapon
     {
         player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
         player.PlayAnimation(LightAttackAnim);
+        player.InitialiseChairScript(AttackStrength.Light, LightAttackDamage);
         player.StartCoroutine(player.TargetImpact(AttackStrength.Light, LightAttackDelay));
         player.StartCoroutine(player.ResetAttackAfterDelay(LightAttackCooldown));
     }
@@ -28,7 +29,7 @@ public class MeleeWeapon : Weapon
     {
         player.GetComponent<AudioSource>().PlayOneShot(MediumAttackSFX);
         player.PlayAnimation(MediumAttackAnim);
-        player.StartCoroutine(player.TargetImpact(AttackStrength.Medium, MediumAttackDelay));
+        player.InitialiseChairScript(AttackStrength.Medium, MediumAttackDamage);
         player.StartCoroutine(player.ResetAttackAfterDelay(MediumAttackCooldown));
     }
 

@@ -37,8 +37,8 @@ MonoBehaviour:
   HeavyAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
   HeavyImpactSFX: {fileID: 0}
   LightAttackAnim: {fileID: 7400000, guid: 71db6171b5bb1d64484d892edd0c263a, type: 2}
-  MediumAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
+  MediumAttackAnim: {fileID: 7400000, guid: e30c7c2a0d343044bb3b064c9a7bac4e, type: 2}
   HeavyAttackAnim: {fileID: 7400000, guid: 27ddf930ad8953c4d84a321bd98f2bf4, type: 2}
-  LightSpecialCDTimer: 0.4202412
-  MediumSpecialCDTimer: 0.4202412
-  HeavySpecialCDTimer: 0.4202412
+  LightSpecialCDTimer: 0
+  MediumSpecialCDTimer: 0
+  HeavySpecialCDTimer: 0

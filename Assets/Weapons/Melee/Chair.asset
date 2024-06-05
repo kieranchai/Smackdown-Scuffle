@@ -16,16 +16,16 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 7effef97fb5b91b4f91fa3f6bf3d9e21, type: 3}
   Crosshair: {fileID: 0}
   Type: 0
-  Prefab: {fileID: 3061612418940849498, guid: dab0c841563263f41be3fb10670dd8dd, type: 3}
+  Prefab: {fileID: 903114766433989454, guid: bf28cff806bd118479c1703b16987f53, type: 3}
   AttackRange: 2.5
-  LightAttackDelay: 0.3
-  LightAttackCooldown: 0.25
+  LightAttackDelay: 0.35
+  LightAttackCooldown: 1
   LightAttackDamage: 1
   LightHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   LightAttackSFX: {fileID: 8300000, guid: 8130461d7768b5942953e195a3394090, type: 3}
   LightImpactSFX: {fileID: 8300000, guid: 13d8501a64fede140b58c93511271b3d, type: 3}
-  MediumAttackDelay: 0.2
-  MediumAttackCooldown: 0.5
+  MediumAttackDelay: 0.3
+  MediumAttackCooldown: 1
   MediumAttackDamage: 2
   MediumHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   MediumAttackSFX: {fileID: 8300000, guid: 8130461d7768b5942953e195a3394090, type: 3}
@@ -36,12 +36,12 @@ MonoBehaviour:
   HeavyHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   HeavyAttackSFX: {fileID: 8300000, guid: 8130461d7768b5942953e195a3394090, type: 3}
   HeavyImpactSFX: {fileID: 8300000, guid: 13d8501a64fede140b58c93511271b3d, type: 3}
-  LightAttackAnim: {fileID: 7400000, guid: 0cb85745e0099bf4cb064ea3074cf7a8, type: 2}
-  MediumAttackAnim: {fileID: 7400000, guid: 1cac9abbaf59c864fbd2d3e050309035, type: 2}
-  HeavyAttackAnim: {fileID: 7400000, guid: 85b6a55d0d7d9684788d341be0eb0a2b, type: 2}
+  LightAttackAnim: {fileID: 7400000, guid: 81f14e1155f5370449b4af79e2701eac, type: 2}
+  MediumAttackAnim: {fileID: 7400000, guid: 878e9a7eccc9be7468af506c297a8929, type: 2}
+  HeavyAttackAnim: {fileID: 7400000, guid: ee9d335b9a7fcca4b8f5c76afe0c2700, type: 2}
   StaminaRegenRate: 15
   MaxStamina: 100
-  CurrentStamina: 100.0429
+  CurrentStamina: 23.13198
   LightStaminaCost: 10
   MediumStaminaCost: 20
   HeavyStaminaCost: 35

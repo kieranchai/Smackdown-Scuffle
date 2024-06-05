@@ -16,7 +16,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: c5101806fe729b34490fc7639794c8c3, type: 3}
   Crosshair: {fileID: 21300000, guid: ba16794c4f5dbf040bfab3ccb19d0ec5, type: 3}
   Type: 1
-  Prefab: {fileID: 5346752335293493426, guid: e40fd12885784974e94663b7d303f84d, type: 3}
+  Prefab: {fileID: 5578304507825838898, guid: 76c80e0fd890dce4ab709e20147dda02, type: 3}
   AttackRange: 35
   LightAttackDelay: 0.15
   LightAttackCooldown: 1
