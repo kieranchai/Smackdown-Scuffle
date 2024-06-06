@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     public bool isUsingSpecial = false;
     public bool hitObstacle = false;
     public GameObject tagTeamerPrefab;
+    public Transform garbageCanSpawnLocation;
+    public Transform garbageSpawnLocation;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -510,6 +512,11 @@ public class PlayerController : MonoBehaviour
         EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().player = this;
         EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().strength = strength;
         EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().damage = damage;
+    }
+
+    public void InitialiseGarbageScript()
+    {
+        EquippedWeaponModel.GetComponent<GarbageEvents>().player = this;
     }
 
     public System.Collections.IEnumerator ResetAttackAfterDelay(float delay)

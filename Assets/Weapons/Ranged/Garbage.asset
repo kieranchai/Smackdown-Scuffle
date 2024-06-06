@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07b51c9e476be0f4d9d4959d3d879a3a, type: 3}
-  m_Name: Example Gun
+  m_Name: Garbage
   m_EditorClassIdentifier: 
   Name: RANGED
   Icon: {fileID: 21300000, guid: c5101806fe729b34490fc7639794c8c3, type: 3}
@@ -36,15 +36,14 @@ MonoBehaviour:
   HeavyHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   HeavyAttackSFX: {fileID: 8300000, guid: d5b7a4968ae7c9b4186ae9ac8e4f44f6, type: 3}
   HeavyImpactSFX: {fileID: 0}
-  LightAttackAnim: {fileID: 7400000, guid: d1a542f80d6d8ce4b897f4e70e36c1ab, type: 2}
+  LightAttackAnim: {fileID: 7400000, guid: 28c1fbf11fc12cd47828d7fc40ca0621, type: 2}
   MediumAttackAnim: {fileID: 7400000, guid: d1a542f80d6d8ce4b897f4e70e36c1ab, type: 2}
-  HeavyAttackAnim: {fileID: 7400000, guid: d1a542f80d6d8ce4b897f4e70e36c1ab, type: 2}
+  HeavyAttackAnim: {fileID: 7400000, guid: d21f4aef67c3cc54eab7a99ff85ef9c4, type: 2}
   ReloadAmount: 50
   MaxAmmo: 50
   CurrentAmmo: 50
   LightAmmoCost: 1
   MediumAmmoCost: 5
-  HeavyAmmoCost: 10
   ReloadAnim: {fileID: 7400000, guid: 25e309f7cd04b4344b4c8c5f38d8f71a, type: 2}
   ReloadSFX: {fileID: 8300000, guid: 028065625a0f4ce41996e1d948e31fae, type: 3}
   CurrentlyReloading: 0

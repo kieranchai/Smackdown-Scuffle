@@ -9,7 +9,6 @@ public class RangedWeapon : Weapon
     public int CurrentAmmo = 50;
     public int LightAmmoCost = 1;
     public int MediumAmmoCost = 5;
-    public int HeavyAmmoCost = 10;
     public AnimationClip ReloadAnim;
     public AudioClip ReloadSFX;
     public bool CurrentlyReloading;
@@ -33,7 +32,7 @@ public class RangedWeapon : Weapon
         {
             player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
             player.PlayAnimation(LightAttackAnim);
-            player.StartCoroutine(player.TargetImpact(AttackStrength.Light, LightAttackDelay));
+            player.InitialiseGarbageScript();
             player.StartCoroutine(player.ResetAttackAfterDelay(LightAttackCooldown));
         }
     }
@@ -44,7 +43,7 @@ public class RangedWeapon : Weapon
         {
             player.GetComponent<AudioSource>().PlayOneShot(MediumAttackSFX);
             player.PlayAnimation(MediumAttackAnim);
-            player.StartCoroutine(player.TargetImpact(AttackStrength.Medium, MediumAttackDelay));
+            player.InitialiseGarbageScript();
             player.StartCoroutine(player.ResetAttackAfterDelay(MediumAttackCooldown));
         }
     }
@@ -55,7 +54,7 @@ public class RangedWeapon : Weapon
         {
             player.PlayAnimation(HeavyAttackAnim);
             player.GetComponent<AudioSource>().PlayOneShot(HeavyAttackSFX);
-            player.StartCoroutine(player.TargetImpact(AttackStrength.Heavy, HeavyAttackDelay));
+            player.InitialiseGarbageScript();
             player.StartCoroutine(player.ResetAttackAfterDelay(HeavyAttackCooldown));
         }
     }
@@ -73,8 +72,8 @@ public class RangedWeapon : Weapon
                 CurrentAmmo -= MediumAmmoCost;
                 break;
             case AttackStrength.Heavy:
-                if (CurrentAmmo < HeavyAmmoCost) return false;
-                CurrentAmmo -= HeavyAmmoCost;
+                if (CurrentAmmo < LightAmmoCost) return false;
+                CurrentAmmo -= CurrentAmmo;
                 break;
         }
         return true;
