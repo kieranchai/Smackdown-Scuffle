@@ -6,19 +6,47 @@ public class Trashbin : MonoBehaviour
 {
     private Collider _col;
     private Rigidbody _rb;
+    [SerializeField]
+    private Material flickerMat;
+
+    [HideInInspector]
     public PlayerController player;
-    private bool hasCollided = false;
+
     private float lifeTime = 0f;
+    private bool hasCollided = false;
     private bool hasDamagedEnemy = false;
+    private bool hasSetFlicker = false;
+
+    private void Start()
+    {
+        _col = GetComponent<Collider>();
+        _rb = GetComponent<Rigidbody>();
+    }
 
     private void Update()
     {
         if (hasCollided)
         {
             lifeTime += Time.deltaTime;
+            if (lifeTime >= 3f)
+            {
+                if (!hasSetFlicker)
+                {
+                    hasSetFlicker = true;
+                    gameObject.GetComponent<MeshRenderer>().material = flickerMat;
+                    gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material = flickerMat;
+                    gameObject.transform.GetChild(1).GetComponent<MeshRenderer>().material = flickerMat;
+                }
+                else
+                {
+                    gameObject.GetComponent<MeshRenderer>().material.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, Mathf.PingPong(Time.time, 1));
+                    gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, Mathf.PingPong(Time.time, 1));
+                    gameObject.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, Mathf.PingPong(Time.time, 1));
+                }
+            }
             if (lifeTime >= 5f)
             {
-                DestroyTrashBin();
+                if (gameObject.GetComponent<MeshRenderer>().material.color.a <= 0.3f) DestroyTrashBin();
             }
         }
     }

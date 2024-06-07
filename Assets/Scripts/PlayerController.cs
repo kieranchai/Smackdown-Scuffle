@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     public GameObject tagTeamerPrefab;
     public Transform garbageCanSpawnLocation;
     public Transform garbageSpawnLocation;
+    public Transform multiGarbageSpawnLocation;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;

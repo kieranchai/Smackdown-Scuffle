@@ -25,23 +25,23 @@ MonoBehaviour:
   LightAttackSFX: {fileID: 8300000, guid: d5b7a4968ae7c9b4186ae9ac8e4f44f6, type: 3}
   LightImpactSFX: {fileID: 0}
   MediumAttackDelay: 0.15
-  MediumAttackCooldown: 1
+  MediumAttackCooldown: 1.3
   MediumAttackDamage: 2
   MediumHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   MediumAttackSFX: {fileID: 8300000, guid: d5b7a4968ae7c9b4186ae9ac8e4f44f6, type: 3}
   MediumImpactSFX: {fileID: 0}
   HeavyAttackDelay: 0.15
-  HeavyAttackCooldown: 1
+  HeavyAttackCooldown: 2.5
   HeavyAttackDamage: 3
   HeavyHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   HeavyAttackSFX: {fileID: 8300000, guid: d5b7a4968ae7c9b4186ae9ac8e4f44f6, type: 3}
   HeavyImpactSFX: {fileID: 0}
   LightAttackAnim: {fileID: 7400000, guid: 28c1fbf11fc12cd47828d7fc40ca0621, type: 2}
-  MediumAttackAnim: {fileID: 7400000, guid: d1a542f80d6d8ce4b897f4e70e36c1ab, type: 2}
+  MediumAttackAnim: {fileID: 7400000, guid: 02d9a60135aa8a0419942bf65e82cea3, type: 2}
   HeavyAttackAnim: {fileID: 7400000, guid: d21f4aef67c3cc54eab7a99ff85ef9c4, type: 2}
   ReloadAmount: 50
   MaxAmmo: 50
-  CurrentAmmo: 50
+  CurrentAmmo: 20
   LightAmmoCost: 1
   MediumAmmoCost: 5
   ReloadAnim: {fileID: 7400000, guid: 25e309f7cd04b4344b4c8c5f38d8f71a, type: 2}

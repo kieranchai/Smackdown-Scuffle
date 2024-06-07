@@ -6,19 +6,35 @@ public class GarbageBag : MonoBehaviour
 {
     private Collider _col;
     private Rigidbody _rb;
+
+    [SerializeField]
+    private Material flickerMat;
+
+    [HideInInspector]
     public PlayerController player;
+
     private bool hasCollided = false;
     private float lifeTime = 0f;
     private bool hasDamagedEnemy = false;
+    private bool hasSetFlicker = false;
 
     private void Update()
     {
         if (hasCollided)
         {
             lifeTime += Time.deltaTime;
+            if (lifeTime >= 3f)
+            {
+                if (!hasSetFlicker)
+                {
+                    hasSetFlicker = true;
+                    gameObject.GetComponent<MeshRenderer>().material = flickerMat;
+                }
+                else gameObject.GetComponent<MeshRenderer>().material.color = new Color(51f / 255f, 51f / 255f, 51f / 255f, Mathf.PingPong(Time.time, 1));
+            }
             if (lifeTime >= 5f)
             {
-                DestroyGarbageBag();
+                if (gameObject.GetComponent<MeshRenderer>().material.color.a <= 0.3f) DestroyGarbageBag();
             }
         }
     }

@@ -121,7 +121,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 4
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f328630151dca3c4c92409420920259c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flickerMat: {fileID: 2100000, guid: 7302f32147a60ac47b8eee8787621807, type: 2}
   player: {fileID: 0}
 --- !u!1 &6981721473430715926
 GameObject:
