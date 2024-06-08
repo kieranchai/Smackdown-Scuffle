@@ -964,7 +964,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 439
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1013,7 +1013,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1111534615
 Transform:
   m_ObjectHideFlags: 0
@@ -1023,7 +1023,7 @@ Transform:
   m_GameObject: {fileID: 1111534614}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.24, y: -0.33, z: 0.88}
+  m_LocalPosition: {x: 0.286, y: -0.276, z: 0.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1846,6 +1846,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ranged Resource Bar
       objectReference: {fileID: 0}
+    - target: {fileID: 2712143140327465475, guid: 203675390fe70ca46b86a92f7e5e221a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6715284519740294624, guid: 203675390fe70ca46b86a92f7e5e221a, type: 3}
       propertyPath: m_Pivot.x
       value: 1
@@ -2125,6 +2129,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crosshair
       objectReference: {fileID: 0}
+    - target: {fileID: 3416211401423689130, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5849245828761906141, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2151,11 +2159,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5849245828761906141, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 75
+      value: 104.2397
       objectReference: {fileID: 0}
     - target: {fileID: 5849245828761906141, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 75
+      value: 104.2397
       objectReference: {fileID: 0}
     - target: {fileID: 5849245828761906141, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2204,6 +2212,10 @@ PrefabInstance:
     - target: {fileID: 5849245828761906141, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6480797118635530980, guid: 8cd3893bf8236ac42a454f97f119d570, type: 3}
+      propertyPath: m_Spacing
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3827,6 +3839,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1606939422}
     m_Modifications:
+    - target: {fileID: 1433510122494845855, guid: 76c80e0fd890dce4ab709e20147dda02, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.001200089
+      objectReference: {fileID: 0}
+    - target: {fileID: 1433510122494845855, guid: 76c80e0fd890dce4ab709e20147dda02, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00589994
+      objectReference: {fileID: 0}
     - target: {fileID: 4974224758166670260, guid: 76c80e0fd890dce4ab709e20147dda02, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.002300017
@@ -5341,16 +5361,19 @@ MonoBehaviour:
   PlayerHead: {fileID: 8798884719773554420}
   DeathCamera: {fileID: 1331582269}
   Sensitivity: 25
+  ammoCircle: {fileID: 2494421642216487744, guid: 1462cae7873b16d4c863ff76c1663473, type: 3}
   LightDamageAnim: {fileID: 7400000, guid: a97ba33e258bf2e4b9e92e16e98aed7a, type: 2}
   MediumDamageAnim: {fileID: 7400000, guid: 17d3f4c0ad5599c4cbf5b2b15329f3b7, type: 2}
   HeavyDamageAnim: {fileID: 7400000, guid: 122fb5744bc7d26478d5e227088de15a, type: 2}
   DeathAnim: {fileID: 7400000, guid: 94ef44cba1e5aa24c958b8d258f7d3d5, type: 2}
+  RangedIdleAnim: {fileID: 7400000, guid: fc841a34f53d037468f9bc7b6c95947a, type: 2}
   LightDamageSFX: {fileID: 8300000, guid: a858dcb285e48c748ba097e06e901ea9, type: 3}
   MediumDamageSFX: {fileID: 8300000, guid: 529fe39f63bc1814c9dcb9a90c99cc47, type: 3}
   HeavyDamageSFX: {fileID: 8300000, guid: 235f5588d6e3c1245935be4aac952c33, type: 3}
   DeathSFX: {fileID: 8300000, guid: b1b0c7d91be729a42bd68f7066252cbc, type: 3}
   HealKey: 116
   DebugHealAmount: 1
+  EquippedWeaponModel: {fileID: 0}
   CC: {fileID: 0}
   AS: {fileID: 0}
 --- !u!137 &5129502542805320993

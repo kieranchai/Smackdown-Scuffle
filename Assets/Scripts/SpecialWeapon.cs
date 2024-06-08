@@ -65,4 +65,11 @@ public class SpecialWeapon : Weapon
         if (HeavySpecialCDTimer < HeavyAttackCooldown)
             HeavySpecialCDTimer += Time.deltaTime;
     }
+
+    public void InitSpecials()
+    {
+        LightSpecialCDTimer = LightAttackCooldown;
+        MediumSpecialCDTimer = MediumAttackCooldown;
+        HeavySpecialCDTimer = HeavyAttackCooldown;
+    }
 }

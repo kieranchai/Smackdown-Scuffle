@@ -6,7 +6,8 @@ public abstract class Weapon : ScriptableObject
 {
     public string Name;
     public Sprite Icon;
-    public Sprite Crosshair;
+    public Sprite Crosshair_Default;
+    public Sprite Crosshair_Enemy;
     public WeaponType Type;
     public GameObject Prefab;
     public PlayerControls.BasicActions Controls;

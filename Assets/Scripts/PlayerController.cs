@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -42,11 +43,15 @@ public class PlayerController : MonoBehaviour
     public Camera DeathCamera;
     public float Sensitivity;
 
+    [Header("UI Refs")]
+    public GameObject ammoCircle;
+
     [Header("Animations")]
     public AnimationClip LightDamageAnim;
     public AnimationClip MediumDamageAnim;
     public AnimationClip HeavyDamageAnim;
     public AnimationClip DeathAnim;
+    public AnimationClip RangedIdleAnim;
 
     [Header("Sound Effects")]
     public AudioClip LightDamageSFX;
@@ -60,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector]
     public PlayerControls.BasicActions Controls;
-    private GameObject EquippedWeaponModel;
+    public GameObject EquippedWeaponModel;
     public CharacterController CC;
     private PlayerControls PC;
     public AudioSource AS;
@@ -68,6 +73,7 @@ public class PlayerController : MonoBehaviour
     private Animator PA;
     float xRotation;
     float _Gravity;
+    bool initialSpecialEquip = true;
 
     private void Awake()
     {
@@ -107,6 +113,7 @@ public class PlayerController : MonoBehaviour
         GetInventoryInput();
         HandleResources();
         GetDebugInputs();
+        CheckIfXHairOverEnemy();
     }
 
 
@@ -240,12 +247,14 @@ public class PlayerController : MonoBehaviour
         switch (weapon.Type)
         {
             case WeaponType.Melee:
+                RemoveHUDAmmoCircles();
                 EquippedWeaponModel = Instantiate(weapon.Prefab, MeleeAnchor.transform);
                 break;
             case WeaponType.Ranged:
                 EquippedWeaponModel = Instantiate(weapon.Prefab, RangedAnchor.transform);
                 break;
             case WeaponType.Special:
+                RemoveHUDAmmoCircles();
                 EquippedWeaponModel = Instantiate(weapon.Prefab, SpecialAnchor.transform);
                 break;
         }
@@ -256,10 +265,10 @@ public class PlayerController : MonoBehaviour
 
         HUD.SwitchHUD(weapon.Type);
 
-        if (weapon.Crosshair != null)
+        if (weapon.Crosshair_Default != null)
         {
             HUD.Crosshair.enabled = true;
-            HUD.Crosshair.sprite = weapon.Crosshair;
+            HUD.Crosshair.sprite = weapon.Crosshair_Default;
         }
         else
         {
@@ -269,6 +278,21 @@ public class PlayerController : MonoBehaviour
 
         FindObjectOfType<InventoryManager>().InitializeInventory();
         EquippedWeapon.InitializeControls(this);
+    }
+
+    public void CheckIfXHairOverEnemy()
+    {
+        if (EquippedWeapon.Crosshair_Default == null) return;
+
+        RaycastHit hit;
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, EquippedWeapon.AttackRange, LayerMask.GetMask("Enemy")))
+        {
+            HUD.Crosshair.sprite = EquippedWeapon.Crosshair_Enemy;
+        }
+        else
+        {
+            HUD.Crosshair.sprite = EquippedWeapon.Crosshair_Default;
+        }
     }
 
     private void HandleResources()
@@ -281,11 +305,40 @@ public class PlayerController : MonoBehaviour
                     ((MeleeWeapon)EquippedWeapon).RegenerateStamina();
                     break;
                 case WeaponType.Special:
-                    ((SpecialWeapon)EquippedWeapon).UpdateCooldowns();
+                    if (initialSpecialEquip)
+                    {
+                        initialSpecialEquip = false;
+                        ((SpecialWeapon)EquippedWeapon).InitSpecials();
+                    }
+                    else
+                    {
+                        ((SpecialWeapon)EquippedWeapon).UpdateCooldowns();
+                    }
                     break;
             }
         }
         HUD.UpdateResources(this);
+    }
+
+    public void RemoveHUDAmmoCircles()
+    {
+        if (HUD.Crosshair.transform.Find("Ammo Counter").childCount > 0)
+        {
+            for (int i = 0; i < HUD.Crosshair.transform.Find("Ammo Counter").childCount; i++)
+            {
+                Destroy(HUD.Crosshair.transform.Find("Ammo Counter").GetChild(i).gameObject);
+            }
+        }
+    }
+
+    public void UpdateHUDAmmoCircles(int currentAmmo, int maxAmmo)
+    {
+        for (int i = 1; i <= maxAmmo / 2; i++)
+        {
+            GameObject ammoCircleUI = Instantiate(ammoCircle, HUD.Crosshair.transform.Find("Ammo Counter"));
+
+            if (i * 2 > currentAmmo) ammoCircleUI.GetComponent<Image>().color = new Color(1, 1, 1, 0.3f);
+        }
     }
 
     public void PerformLightAttack()
@@ -353,10 +406,10 @@ public class PlayerController : MonoBehaviour
                 switch (strength)
                 {
                     case AttackStrength.Light:
-                        enemy.Knockback(transform.forward);
                         enemy.TakeDamage(EquippedWeapon.LightAttackDamage, strength);
                         break;
                     case AttackStrength.Medium:
+                        enemy.Knockback(transform.forward);
                         enemy.TakeDamage(EquippedWeapon.MediumAttackDamage, strength);
                         break;
                     case AttackStrength.Heavy:
@@ -397,7 +450,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(ForwardCharge());
                 break;
             case AttackStrength.Medium:
-                StartCoroutine(TagTeam());
+                StartCoroutine(TagTeam(EquippedWeapon.MediumAttackDamage));
                 break;
             case AttackStrength.Heavy:
                 break;
@@ -409,12 +462,13 @@ public class PlayerController : MonoBehaviour
         return Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit);
     }
 
-    public System.Collections.IEnumerator TagTeam()
+    public System.Collections.IEnumerator TagTeam(int damage)
     {
         RaycastHit hit;
         if (GetShootHitPos(out hit))
         {
             GameObject tagTeamer = Instantiate(tagTeamerPrefab, hit.point + new Vector3(0, 10f, 0f), transform.rotation);
+            tagTeamer.GetComponent<TagTeamer>().damage = damage;
         }
 
         EndSpecialAttack();
@@ -438,12 +492,12 @@ public class PlayerController : MonoBehaviour
         EndSpecialAttack();
     }
 
-/*    void OnDrawGizmos()
-    {
-        // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(PlayerCamera.transform.position, 2.5f);
-    }*/
+    /*    void OnDrawGizmos()
+        {
+            // Draw a yellow sphere at the transform's position
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(PlayerCamera.transform.position, 2.5f);
+        }*/
 
     public void CheckSpecialHit(AttackStrength strength)
     {
@@ -580,11 +634,21 @@ public class PlayerController : MonoBehaviour
             Die();
     }
 
-    internal System.Collections.IEnumerator Reload(float reloadDuration, RangedWeapon wep)
+    internal System.Collections.IEnumerator Reload(float reloadDuration, RangedWeapon wep, int reloadAmount, AudioClip ReloadSFX = null)
     {
-        yield return new WaitForSeconds(reloadDuration);
+        while (wep.CurrentAmmo < wep.MaxAmmo)
+        {
+            yield return new WaitForSeconds(reloadDuration);
+            wep.CurrentAmmo = Mathf.Min(wep.CurrentAmmo + reloadAmount, wep.MaxAmmo);
+            RemoveHUDAmmoCircles();
+            UpdateHUDAmmoCircles(wep.CurrentAmmo, wep.MaxAmmo);
+            if (ReloadSFX != null) GetComponent<AudioSource>().PlayOneShot(ReloadSFX);
+        }
         wep.CurrentlyReloading = false;
-        wep.CurrentAmmo = Mathf.Min(wep.CurrentAmmo + wep.ReloadAmount, wep.MaxAmmo);
+        if (EquippedWeaponModel.GetComponent<Animator>().GetCurrentAnimatorClipInfo(0)[0].clip.name == "Reload")
+        {
+            EquippedWeaponModel.GetComponent<Animator>().SetTrigger("ReloadDone");
+        }
     }
 
     private void HealPlayer(int healAmount)
@@ -610,13 +674,4 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
-}
-
-[System.Serializable]
-public class DebugWarpParams
-{
-    public GameObject playerWarpPoint;
-    public GameObject enemyWarpPoint;
-    public KeyCode warpKey;
 }

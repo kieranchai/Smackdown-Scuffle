@@ -15,6 +15,7 @@ public class EnemyController : MonoBehaviour
     public AnimationClip MediumDamageAnim;
     public AnimationClip HeavyDamageAnim;
     public AnimationClip DeathAnim;
+    public AnimationClip SlammedAnim;
 
     [Header("Combat Animations")]
     public AnimationClip LightAttackAnim;
@@ -79,6 +80,22 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public void GetSlammed(int damage)
+    {
+        if (CurrentHealth > 0)
+        {
+            GetComponent<AudioSource>().pitch = UnityEngine.Random.Range(0.95f, 1.15f);
+            EnemyAnimator.Play(SlammedAnim.name, -1, 0);
+            GetComponent<AudioSource>().PlayOneShot(MediumDamageSFX);
+
+            CurrentHealth -= damage;
+
+            if (CurrentHealth <= 0) Die();
+
+            FindObjectOfType<HUDManager>().UpdateHPBars();
+        }
+    }
+
     public void Knockback(Vector3 direction)
     {
         EnemyRigidBody.AddForce(direction * 25f, ForceMode.Impulse);
@@ -126,4 +143,5 @@ public class EnemyController : MonoBehaviour
 
         Destroy(this.gameObject);
     }
+
 }

@@ -19,13 +19,13 @@ MonoBehaviour:
   Prefab: {fileID: 8159811442855328829, guid: 30d42d4f2ed9a1b44b822ad34d492afe, type: 3}
   AttackRange: 0.2
   LightAttackDelay: 0.25
-  LightAttackCooldown: 0
+  LightAttackCooldown: 5
   LightAttackDamage: 1
   LightHitEffect: {fileID: 0}
   LightAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
   LightImpactSFX: {fileID: 0}
-  MediumAttackDelay: 0
-  MediumAttackCooldown: 0
+  MediumAttackDelay: 0.32
+  MediumAttackCooldown: 10
   MediumAttackDamage: 2
   MediumHitEffect: {fileID: 0}
   MediumAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
