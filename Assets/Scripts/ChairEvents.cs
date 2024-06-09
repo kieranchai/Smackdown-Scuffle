@@ -11,6 +11,7 @@ public class ChairEvents : MonoBehaviour
     [HideInInspector]
     public int damage;
     public Collider _col;
+    public bool hasHit = false;
 
     public void MoveForward()
     {
@@ -30,14 +31,19 @@ public class ChairEvents : MonoBehaviour
 
     private void OnTriggerStay(Collider collision)
     {
-        if (player.EquippedWeapon.MediumImpactSFX != null)
-            player.AS.PlayOneShot(player.EquippedWeapon.MediumImpactSFX);
-        if (player.EquippedWeapon.MediumHitEffect != null)
-            Instantiate(player.EquippedWeapon.MediumHitEffect, collision.ClosestPoint(transform.position), Quaternion.identity);
-        EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
-        if (collision.gameObject.GetComponent<EnemyController>())
+        if (!hasHit)
         {
-            enemy.TakeDamage(damage, strength);
+            hasHit = true;
+            if (player.EquippedWeapon.LightImpactSFX != null)
+                player.AS.PlayOneShot(player.EquippedWeapon.LightImpactSFX);
+            if (player.EquippedWeapon.LightHitEffect != null)
+                Instantiate(player.EquippedWeapon.LightHitEffect, collision.ClosestPoint(transform.position), Quaternion.identity);
+            EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+            if (collision.gameObject.GetComponent<EnemyController>())
+            {
+                Instantiate(player.light_comicVFX, collision.ClosestPoint(transform.position) + new Vector3(0, 0, 0.2f), Quaternion.identity);
+                enemy.TakeDamage(damage, strength);
+            }
         }
     }
 }

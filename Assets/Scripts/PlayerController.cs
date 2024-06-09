@@ -45,6 +45,10 @@ public class PlayerController : MonoBehaviour
 
     [Header("UI Refs")]
     public GameObject ammoCircle;
+    public GameObject light_comicVFX;
+    public GameObject heavy_comicVFX;
+    public GameObject medium_comicVFX;
+    public GameObject ranged_heavy_comicVFX;
 
     [Header("Animations")]
     public AnimationClip LightDamageAnim;
@@ -350,14 +354,13 @@ public class PlayerController : MonoBehaviour
         if (EquippedWeapon.ExpendResource(AttackStrength.Light))
         {
             if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
+            if (EquippedWeapon.Type == WeaponType.Melee) EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().hasHit = false;
 
             IsAttacking = true;
             EquippedWeapon.PerformLightAttack(this);
 
-            if (EquippedWeapon.Type != WeaponType.Special)
-                StartCoroutine(ResetAttackAfterDelay(EquippedWeapon.LightAttackCooldown));
-            else
-                IsAttacking = false;
+            if (EquippedWeapon.Type != WeaponType.Special) StartCoroutine(ResetAttackAfterDelay(EquippedWeapon.LightAttackCooldown));
+            else IsAttacking = false;
         }
     }
 
@@ -409,10 +412,18 @@ public class PlayerController : MonoBehaviour
                         enemy.TakeDamage(EquippedWeapon.LightAttackDamage, strength);
                         break;
                     case AttackStrength.Medium:
+                        if (EquippedWeapon.Type == WeaponType.Melee)
+                        {
+                            Instantiate(medium_comicVFX, hit.point, Quaternion.identity);
+                        }
                         enemy.Knockback(transform.forward);
                         enemy.TakeDamage(EquippedWeapon.MediumAttackDamage, strength);
                         break;
                     case AttackStrength.Heavy:
+                        if (EquippedWeapon.Type == WeaponType.Melee)
+                        {
+                            Instantiate(heavy_comicVFX, hit.point + new Vector3(0, 0, 0.2f), Quaternion.identity);
+                        }
                         enemy.TakeDamage(EquippedWeapon.HeavyAttackDamage, strength);
                         break;
                 }

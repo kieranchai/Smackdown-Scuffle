@@ -98,7 +98,7 @@ public class EnemyController : MonoBehaviour
 
     public void Knockback(Vector3 direction)
     {
-        EnemyRigidBody.AddForce(direction * 25f, ForceMode.Impulse);
+        EnemyRigidBody.AddForce(direction * 30f, ForceMode.Impulse);
     }
 
     public void DealDamage(AttackStrength strength)

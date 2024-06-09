@@ -1323,6 +1323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1503717003}
   - component: {fileID: 1503717002}
+  - component: {fileID: 1503717004}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -1407,6 +1408,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 103.39, y: 61.2, z: 0}
+--- !u!114 &1503717004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1503717001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!114 &1505593910 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8814365550948037009, guid: 53712402152aec645ad5206f98ae8fba, type: 3}
@@ -5362,6 +5386,10 @@ MonoBehaviour:
   DeathCamera: {fileID: 1331582269}
   Sensitivity: 25
   ammoCircle: {fileID: 2494421642216487744, guid: 1462cae7873b16d4c863ff76c1663473, type: 3}
+  light_comicVFX: {fileID: 5529546397395398863, guid: e770f234b33b4f04586d1d575c42ba64, type: 3}
+  heavy_comicVFX: {fileID: 5529546397395398863, guid: 70427e448cbf1e74381066ded5ba1b5f, type: 3}
+  medium_comicVFX: {fileID: 5529546397395398863, guid: 6ef8acb8a76be2a4d96232bdfba2c3a8, type: 3}
+  ranged_heavy_comicVFX: {fileID: 5529546397395398863, guid: c305e99bd8c3bc24f93d88aee62c7c78, type: 3}
   LightDamageAnim: {fileID: 7400000, guid: a97ba33e258bf2e4b9e92e16e98aed7a, type: 2}
   MediumDamageAnim: {fileID: 7400000, guid: 17d3f4c0ad5599c4cbf5b2b15329f3b7, type: 2}
   HeavyDamageAnim: {fileID: 7400000, guid: 122fb5744bc7d26478d5e227088de15a, type: 2}
