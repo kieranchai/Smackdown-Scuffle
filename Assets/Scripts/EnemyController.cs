@@ -80,6 +80,21 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public IEnumerator ChokeDeath(int damageAmount)
+    {
+        CurrentHealth -= damageAmount;
+        FindObjectOfType<HUDManager>().UpdateHPBars();
+        yield return new WaitForSeconds(0.4f);
+        if (CurrentHealth <= 0)
+        {
+            GetComponent<AudioSource>().Stop();
+            EnemyAnimator.Play(DeathAnim.name, -1, 0);
+            GetComponent<AudioSource>().PlayOneShot(DeathSFX);
+            Invoke("Respawn", 3f);
+        }
+        yield return null;
+    }
+
     public void GetSlammed(int damage)
     {
         if (CurrentHealth > 0)

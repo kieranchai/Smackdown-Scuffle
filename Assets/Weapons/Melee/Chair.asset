@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: MELEE
   Icon: {fileID: 21300000, guid: 7effef97fb5b91b4f91fa3f6bf3d9e21, type: 3}
-  Crosshair: {fileID: 0}
+  Crosshair_Default: {fileID: 0}
+  Crosshair_Enemy: {fileID: 0}
   Type: 0
   Prefab: {fileID: 903114766433989454, guid: bf28cff806bd118479c1703b16987f53, type: 3}
   AttackRange: 2.5
@@ -41,7 +42,7 @@ MonoBehaviour:
   HeavyAttackAnim: {fileID: 7400000, guid: ee9d335b9a7fcca4b8f5c76afe0c2700, type: 2}
   StaminaRegenRate: 15
   MaxStamina: 100
-  CurrentStamina: 14.226454
+  CurrentStamina: 100
   LightStaminaCost: 10
   MediumStaminaCost: 20
   HeavyStaminaCost: 35

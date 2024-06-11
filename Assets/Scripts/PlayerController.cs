@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 inputVelocity;
     public Vector3 Velocity;
     public bool canMove = true;
+    public bool canJump = true;
     public bool canTurn = true;
 
     [Header("Combat")]
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviour
     public GameObject heavy_comicVFX;
     public GameObject medium_comicVFX;
     public GameObject ranged_heavy_comicVFX;
+    public GameObject ranged_light_comicVFX;
 
     [Header("Animations")]
     public AnimationClip LightDamageAnim;
@@ -224,6 +226,7 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         if (!canMove) return;
+        if (!canJump) return;
 
         if (IsGrounded)
         {
@@ -347,7 +350,7 @@ public class PlayerController : MonoBehaviour
 
     public void PerformLightAttack()
     {
-        if (IsAttacking || EquippedWeapon == null) return;
+        if (isUsingSpecial || IsAttacking || EquippedWeapon == null) return;
 
         if (EquippedWeapon.Type == WeaponType.Special && !IsGrounded) return;
 
@@ -366,7 +369,7 @@ public class PlayerController : MonoBehaviour
 
     public void PerformMediumAttack()
     {
-        if (IsAttacking || EquippedWeapon == null) return;
+        if (isUsingSpecial || IsAttacking || EquippedWeapon == null) return;
 
         if (EquippedWeapon.ExpendResource(AttackStrength.Medium))
         {
@@ -384,10 +387,11 @@ public class PlayerController : MonoBehaviour
 
     public void PerformHeavyAttack()
     {
-        if (IsAttacking || EquippedWeapon == null) return;
+        if (isUsingSpecial || IsAttacking || EquippedWeapon == null) return;
 
         if (EquippedWeapon.ExpendResource(AttackStrength.Heavy))
         {
+            if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
             IsAttacking = true;
             EquippedWeapon.PerformHeavyAttack(this);
 
@@ -464,6 +468,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(TagTeam(EquippedWeapon.MediumAttackDamage));
                 break;
             case AttackStrength.Heavy:
+                StartCoroutine(Choke());
                 break;
         }
     }
@@ -503,16 +508,62 @@ public class PlayerController : MonoBehaviour
         EndSpecialAttack();
     }
 
+    public System.Collections.IEnumerator Choke()
+    {
+        if (CheckChokeLand())
+        {
+            EnemyController enemy = CheckChokeLand();
+            enemy.gameObject.transform.SetParent(EquippedWeaponModel.transform.Find("Basiccharacter")
+                .Find("clavicle_r").Find("upperarm_r").Find("lowerarm_r").Find("hand_r"));
+            enemy.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+            enemy.gameObject.GetComponent<Collider>().enabled = false;
+            enemy.transform.localPosition = new Vector3(0.0774f, -0.0529f, -0.0563f);
+            enemy.transform.localRotation = Quaternion.Euler(23.144f, -124.586f, -54.422f);
+            enemy.EnemyAnimator.Play("Choking");
+
+            // Play Choking Anim
+            EquippedWeaponModel.GetComponent<Animator>().Play("Choking");
+
+            MoveSpeed = 1.0f;
+            canJump = false;
+
+            float chokeTime = 0f;
+            while (chokeTime < 3.9f)
+            {
+                chokeTime += Time.deltaTime;
+                yield return null;
+            }
+
+            enemy.gameObject.transform.parent = null;
+            enemy.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            enemy.gameObject.GetComponent<Collider>().enabled = true;
+            enemy.gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * 55.0f, ForceMode.Impulse);
+            enemy.transform.rotation = Quaternion.Euler(enemy.transform.rotation.x, enemy.transform.rotation.y, 0f);
+            enemy.StartCoroutine(enemy.ChokeDeath(enemy.MaxHealth));
+            MoveSpeed = 5.0f;
+            canJump = true;
+            EndSpecialAttack();
+        }
+        else
+        {
+            EquippedWeaponModel.GetComponent<Animator>().Play("Idle");
+            EndSpecialAttack();
+        }
+
+        yield return null;
+    }
+
+
     /*    void OnDrawGizmos()
         {
             // Draw a yellow sphere at the transform's position
             Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(PlayerCamera.transform.position, 2.5f);
-        }*/
-
+            Gizmos.DrawSphere(transform.position + CC.center, CC.height / 3f);
+        }
+    */
     public void CheckSpecialHit(AttackStrength strength)
     {
-        if (Physics.SphereCast(transform.position + CC.center, CC.height / 2, transform.forward, out RaycastHit hit, 0.2f))
+        if (Physics.SphereCast(transform.position + CC.center, CC.height / 3.25f, transform.forward, out RaycastHit hit, 0.2f))
         {
             hitObstacle = true;
             Velocity = Vector3.zero;
@@ -526,9 +577,6 @@ public class PlayerController : MonoBehaviour
                         break;
                     case AttackStrength.Medium:
                         enemy.TakeDamage(EquippedWeapon.MediumAttackDamage, strength);
-                        break;
-                    case AttackStrength.Heavy:
-                        enemy.TakeDamage(EquippedWeapon.HeavyAttackDamage, strength);
                         break;
                 }
             }
@@ -546,15 +594,24 @@ public class PlayerController : MonoBehaviour
                     if (EquippedWeapon.MediumHitEffect != null)
                         Instantiate(EquippedWeapon.MediumHitEffect, hit.point, Quaternion.identity);
                     break;
-                case AttackStrength.Heavy:
-                    if (EquippedWeapon.HeavyImpactSFX != null)
-                        AS.PlayOneShot(EquippedWeapon.HeavyImpactSFX);
-                    if (EquippedWeapon.HeavyHitEffect != null)
-                        Instantiate(EquippedWeapon.HeavyHitEffect, hit.point, Quaternion.identity);
-                    break;
             }
         }
     }
+
+    public EnemyController CheckChokeLand()
+    {
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out RaycastHit hit, 1.0f))
+        {
+            EnemyController enemy = hit.collider.GetComponent<EnemyController>();
+            if (enemy != null)
+            {
+                return enemy;
+            }
+        }
+
+        return null;
+    }
+
 
     public void EndSpecialAttack()
     {
