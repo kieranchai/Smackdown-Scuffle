@@ -38,22 +38,7 @@ public class SpecialWeapon : Weapon
 
     public override bool ExpendResource(AttackStrength strength)
     {
-        switch (strength)
-        {
-            case AttackStrength.Light:
-                if (LightSpecialCDTimer < LightAttackCooldown) return false;
-                LightSpecialCDTimer = 0;
-                break;
-            case AttackStrength.Medium:
-                if (MediumSpecialCDTimer < MediumAttackCooldown) return false;
-                MediumSpecialCDTimer = 0;
-                break;
-            case AttackStrength.Heavy:
-                if (HeavySpecialCDTimer < HeavyAttackCooldown) return false;
-                HeavySpecialCDTimer = 0;
-                break;
-        }
-        return true;
+        throw new System.NotImplementedException();
     }
 
     public void UpdateCooldowns()

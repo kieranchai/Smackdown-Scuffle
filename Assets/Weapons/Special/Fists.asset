@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: SPECIAL
   Icon: {fileID: 21300000, guid: 14a5a932e059698498d16fd57a7366f2, type: 3}
-  Crosshair_Default: {fileID: 0}
-  Crosshair_Enemy: {fileID: 0}
+  Crosshair_Default: {fileID: 21300000, guid: 996ac9a2e9e1ecd49980ab82ccd7e990, type: 3}
+  Crosshair_Enemy: {fileID: 21300000, guid: c9a52e97722647b4ab192435236ef34d, type: 3}
   Type: 2
   Prefab: {fileID: 8159811442855328829, guid: 30d42d4f2ed9a1b44b822ad34d492afe, type: 3}
   AttackRange: 0.2
@@ -26,7 +26,7 @@ MonoBehaviour:
   LightAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
   LightImpactSFX: {fileID: 0}
   MediumAttackDelay: 0.32
-  MediumAttackCooldown: 10
+  MediumAttackCooldown: 0
   MediumAttackDamage: 2
   MediumHitEffect: {fileID: 0}
   MediumAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
@@ -41,5 +41,5 @@ MonoBehaviour:
   MediumAttackAnim: {fileID: 7400000, guid: e30c7c2a0d343044bb3b064c9a7bac4e, type: 2}
   HeavyAttackAnim: {fileID: 7400000, guid: 11ea47341cf42bb4eb937bf5b2e26646, type: 2}
   LightSpecialCDTimer: 5
-  MediumSpecialCDTimer: 10
+  MediumSpecialCDTimer: 0
   HeavySpecialCDTimer: 0

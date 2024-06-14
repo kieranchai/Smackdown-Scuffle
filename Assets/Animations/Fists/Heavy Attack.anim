@@ -5460,7 +5460,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Basiccharacter/clavicle_r/upperarm_r/lowerarm_r
+    path: Basiccharacter/clavicle_r/upperarm_r
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -5472,7 +5472,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Basiccharacter/clavicle_r/upperarm_r/lowerarm_r
+    path: Basiccharacter/clavicle_r/upperarm_r
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -5484,7 +5484,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Basiccharacter/clavicle_r/upperarm_r/lowerarm_r
+    path: Basiccharacter/clavicle_r/upperarm_r
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -5856,7 +5856,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Basiccharacter/clavicle_r/upperarm_r
+    path: Basiccharacter/clavicle_r/upperarm_r/lowerarm_r
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -5868,7 +5868,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Basiccharacter/clavicle_r/upperarm_r
+    path: Basiccharacter/clavicle_r/upperarm_r/lowerarm_r
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -5880,7 +5880,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Basiccharacter/clavicle_r/upperarm_r
+    path: Basiccharacter/clavicle_r/upperarm_r/lowerarm_r
     classID: 4
     script: {fileID: 0}
     flags: 0

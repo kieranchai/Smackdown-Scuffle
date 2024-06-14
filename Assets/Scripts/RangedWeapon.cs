@@ -68,28 +68,7 @@ public class RangedWeapon : Weapon
 
     public override bool ExpendResource(AttackStrength strength)
     {
-        switch (strength)
-        {
-            case AttackStrength.Light:
-                if (CurrentAmmo < LightAmmoCost) return false;
-                CurrentAmmo -= LightAmmoCost;
-                FindObjectOfType<PlayerController>().RemoveHUDAmmoCircles();
-                FindObjectOfType<PlayerController>().UpdateHUDAmmoCircles(CurrentAmmo, MaxAmmo);
-                break;
-            case AttackStrength.Medium:
-                if (CurrentAmmo < MediumAmmoCost) return false;
-                CurrentAmmo -= MediumAmmoCost;
-                FindObjectOfType<PlayerController>().RemoveHUDAmmoCircles();
-                FindObjectOfType<PlayerController>().UpdateHUDAmmoCircles(CurrentAmmo, MaxAmmo);
-                break;
-            case AttackStrength.Heavy:
-                if (CurrentAmmo < LightAmmoCost) return false;
-                CurrentAmmo -= CurrentAmmo;
-                FindObjectOfType<PlayerController>().RemoveHUDAmmoCircles();
-                FindObjectOfType<PlayerController>().UpdateHUDAmmoCircles(CurrentAmmo, MaxAmmo);
-                break;
-        }
-        return true;
+        throw new System.NotImplementedException();
     }
 
     public void Reload()

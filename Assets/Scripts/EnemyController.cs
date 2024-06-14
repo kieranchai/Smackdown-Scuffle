@@ -39,12 +39,14 @@ public class EnemyController : MonoBehaviour
     public GameObject SpawnParticles;
     public Rigidbody EnemyRigidBody;
 
+    public EnemyHP enemyHPBar;
+
     private void OnEnable()
     {
         Instantiate(SpawnParticles, transform.position, Quaternion.identity);
         CurrentHealth = MaxHealth;
         GetComponent<CapsuleCollider>().enabled = true;
-        FindObjectOfType<HUDManager>().UpdateHPBars();
+        enemyHPBar.ResetBar();
     }
 
     public void TakeDamage(int damageAmount, AttackStrength strength)
@@ -76,14 +78,18 @@ public class EnemyController : MonoBehaviour
             if (CurrentHealth <= 0)
                 Die();
 
-            FindObjectOfType<HUDManager>().UpdateHPBars();
+            enemyHPBar.UpdateHealthBar();
+            enemyHPBar.ShowName();
+            enemyHPBar.ShowHealth();
         }
     }
 
     public IEnumerator ChokeDeath(int damageAmount)
     {
         CurrentHealth -= damageAmount;
-        FindObjectOfType<HUDManager>().UpdateHPBars();
+        enemyHPBar.UpdateHealthBar();
+        enemyHPBar.ShowName();
+        enemyHPBar.ShowHealth();
         yield return new WaitForSeconds(0.4f);
         if (CurrentHealth <= 0)
         {
@@ -107,7 +113,9 @@ public class EnemyController : MonoBehaviour
 
             if (CurrentHealth <= 0) Die();
 
-            FindObjectOfType<HUDManager>().UpdateHPBars();
+            enemyHPBar.UpdateHealthBar();
+            enemyHPBar.ShowName();
+            enemyHPBar.ShowHealth();
         }
     }
 

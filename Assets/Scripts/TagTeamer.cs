@@ -7,7 +7,10 @@ public class TagTeamer : MonoBehaviour
     private Rigidbody rb;
 
     [SerializeField]
-    private ParticleSystem poofParticles;
+    private GameObject comicExplosionVFX;
+
+    [SerializeField]
+    private GameObject explosionVFX;
 
     [HideInInspector]
     public int damage;
@@ -20,7 +23,8 @@ public class TagTeamer : MonoBehaviour
 
     public void Landed()
     {
-        poofParticles.Play();
+        Instantiate(comicExplosionVFX, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+        Instantiate(explosionVFX, transform.position, Quaternion.identity);
         rb.isKinematic = true;
         GetComponent<Collider>().enabled = false;
         Destroy(transform.GetChild(0).gameObject);

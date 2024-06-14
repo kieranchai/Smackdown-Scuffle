@@ -6900,7 +6900,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770f17ce298fb544e951a03ddf1697ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poofParticles: {fileID: 8560128791811924127}
+  comicExplosionVFX: {fileID: 5529546397395398863, guid: 29028b7816607034d86fca5140e65465, type: 3}
+  explosionVFX: {fileID: 7065237078809927466, guid: 0b0f2092ea10a8146877e8bc6caca971, type: 3}
   damage: 0
 --- !u!54 &-3450524731142718852
 Rigidbody:

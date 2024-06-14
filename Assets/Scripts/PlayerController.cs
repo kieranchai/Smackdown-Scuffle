@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     public Transform garbageCanSpawnLocation;
     public Transform garbageSpawnLocation;
     public Transform multiGarbageSpawnLocation;
+    public float StaminaRegenRate = 5f;
+    public float MaxStamina = 100;
+    public float CurrentStamina = 100;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -51,6 +54,7 @@ public class PlayerController : MonoBehaviour
     public GameObject medium_comicVFX;
     public GameObject ranged_heavy_comicVFX;
     public GameObject ranged_light_comicVFX;
+    public ParticleSystem speedLines;
 
     [Header("Animations")]
     public AnimationClip LightDamageAnim;
@@ -90,6 +94,7 @@ public class PlayerController : MonoBehaviour
         PA = GetComponentInChildren<Animator>();
         HUD = FindObjectOfType<HUDManager>();
         EquipWeapon(WeaponInventory[0]);
+        CurrentStamina = MaxStamina;
     }
 
     private void OnEnable()
@@ -117,9 +122,13 @@ public class PlayerController : MonoBehaviour
     {
         GroundedCheck();
         GetInventoryInput();
+        RegenerateStamina();
         HandleResources();
         GetDebugInputs();
+
+        // UI
         CheckIfXHairOverEnemy();
+        HUD.UpdateHPBars(this);
     }
 
 
@@ -292,9 +301,10 @@ public class PlayerController : MonoBehaviour
         if (EquippedWeapon.Crosshair_Default == null) return;
 
         RaycastHit hit;
-        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, EquippedWeapon.AttackRange, LayerMask.GetMask("Enemy")))
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, 50f, LayerMask.GetMask("Enemy")))
         {
             HUD.Crosshair.sprite = EquippedWeapon.Crosshair_Enemy;
+            hit.transform.gameObject.GetComponent<EnemyController>().enemyHPBar.ShowName();
         }
         else
         {
@@ -308,9 +318,6 @@ public class PlayerController : MonoBehaviour
         {
             switch (EquippedWeapon.Type)
             {
-                case WeaponType.Melee:
-                    ((MeleeWeapon)EquippedWeapon).RegenerateStamina();
-                    break;
                 case WeaponType.Special:
                     if (initialSpecialEquip)
                     {
@@ -325,6 +332,15 @@ public class PlayerController : MonoBehaviour
             }
         }
         HUD.UpdateResources(this);
+        HUD.UpdateStaminaBar(this);
+    }
+
+    public void RegenerateStamina()
+    {
+        if (CurrentStamina < MaxStamina)
+        {
+            CurrentStamina += StaminaRegenRate * Time.deltaTime;
+        }
     }
 
     public void RemoveHUDAmmoCircles()
@@ -348,13 +364,84 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool ExpendResource(AttackStrength strength, WeaponType weaponType)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.Melee:
+                MeleeWeapon meleeWeapon = (MeleeWeapon)EquippedWeapon;
+                switch (strength)
+                {
+                    case AttackStrength.Light:
+                        if (CurrentStamina < meleeWeapon.LightStaminaCost) return false;
+                        CurrentStamina -= meleeWeapon.LightStaminaCost;
+                        break;
+                    case AttackStrength.Medium:
+                        if (CurrentStamina < meleeWeapon.MediumStaminaCost) return false;
+                        CurrentStamina -= meleeWeapon.MediumStaminaCost;
+                        break;
+                    case AttackStrength.Heavy:
+                        if (CurrentStamina < meleeWeapon.HeavyStaminaCost) return false;
+                        CurrentStamina -= meleeWeapon.HeavyStaminaCost;
+                        break;
+                }
+                HUD.staminaLerpTimer = 0f;
+                break;
+            case WeaponType.Ranged:
+                RangedWeapon rangedWeapon = (RangedWeapon)EquippedWeapon;
+                switch (strength)
+                {
+                    case AttackStrength.Light:
+                        if (rangedWeapon.CurrentAmmo < rangedWeapon.LightAmmoCost) return false;
+                        rangedWeapon.CurrentAmmo -= rangedWeapon.LightAmmoCost;
+                        RemoveHUDAmmoCircles();
+                        UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
+                        break;
+                    case AttackStrength.Medium:
+                        if (rangedWeapon.CurrentAmmo < rangedWeapon.MediumAmmoCost) return false;
+                        rangedWeapon.CurrentAmmo -= rangedWeapon.MediumAmmoCost;
+                        RemoveHUDAmmoCircles();
+                        UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
+                        break;
+                    case AttackStrength.Heavy:
+                        if (rangedWeapon.CurrentAmmo < rangedWeapon.LightAmmoCost) return false;
+                        rangedWeapon.CurrentAmmo -= rangedWeapon.CurrentAmmo;
+                        RemoveHUDAmmoCircles();
+                        UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
+                        break;
+                }
+                break;
+            case WeaponType.Special:
+                SpecialWeapon specialWeapon = (SpecialWeapon)EquippedWeapon;
+                switch (strength)
+                {
+                    case AttackStrength.Light:
+                        if (specialWeapon.LightSpecialCDTimer < specialWeapon.LightAttackCooldown) return false;
+                        specialWeapon.LightSpecialCDTimer = 0;
+                        break;
+                    case AttackStrength.Medium:
+                        if (specialWeapon.MediumSpecialCDTimer < specialWeapon.MediumAttackCooldown) return false;
+                        specialWeapon.MediumSpecialCDTimer = 0;
+                        break;
+                    case AttackStrength.Heavy:
+                        if (specialWeapon.HeavySpecialCDTimer < specialWeapon.HeavyAttackCooldown) return false;
+                        specialWeapon.HeavySpecialCDTimer = 0;
+                        break;
+                }
+                break;
+        }
+
+
+        return true;
+    }
+
     public void PerformLightAttack()
     {
         if (isUsingSpecial || IsAttacking || EquippedWeapon == null) return;
 
         if (EquippedWeapon.Type == WeaponType.Special && !IsGrounded) return;
 
-        if (EquippedWeapon.ExpendResource(AttackStrength.Light))
+        if (ExpendResource(AttackStrength.Light, EquippedWeapon.Type))
         {
             if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
             if (EquippedWeapon.Type == WeaponType.Melee) EquippedWeaponModel.transform.Find("Folding Chair").GetComponent<ChairEvents>().hasHit = false;
@@ -371,7 +458,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isUsingSpecial || IsAttacking || EquippedWeapon == null) return;
 
-        if (EquippedWeapon.ExpendResource(AttackStrength.Medium))
+        if (ExpendResource(AttackStrength.Medium, EquippedWeapon.Type))
         {
             if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
 
@@ -389,7 +476,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isUsingSpecial || IsAttacking || EquippedWeapon == null) return;
 
-        if (EquippedWeapon.ExpendResource(AttackStrength.Heavy))
+        if (ExpendResource(AttackStrength.Heavy, EquippedWeapon.Type))
         {
             if (EquippedWeapon.Type == WeaponType.Special) isUsingSpecial = true;
             IsAttacking = true;
@@ -497,13 +584,17 @@ public class PlayerController : MonoBehaviour
         canTurn = false;
         Velocity = Vector3.zero;
         float chargeTime = 0f;
+        speedLines.Play();
         while (!hitObstacle && chargeTime < 0.5f)
         {
+            PlayerCamera.fieldOfView -= 20f * Time.deltaTime;
             CC.Move(transform.forward * 18f * Time.deltaTime);
             CheckSpecialHit(AttackStrength.Light);
             chargeTime += Time.deltaTime;
             yield return null;
         }
+        speedLines.Stop();
+        PlayerCamera.fieldOfView = 75f;
         EquippedWeaponModel.GetComponent<Animator>().Play("End Light");
         EndSpecialAttack();
     }
@@ -546,7 +637,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            EquippedWeaponModel.GetComponent<Animator>().Play("Idle");
             EndSpecialAttack();
         }
 
@@ -573,6 +663,8 @@ public class PlayerController : MonoBehaviour
                 switch (strength)
                 {
                     case AttackStrength.Light:
+                        Instantiate(light_comicVFX, hit.point, Quaternion.identity);
+                        enemy.Knockback(transform.forward);
                         enemy.TakeDamage(EquippedWeapon.LightAttackDamage, strength);
                         break;
                     case AttackStrength.Medium:
@@ -603,7 +695,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out RaycastHit hit, 1.0f))
         {
             EnemyController enemy = hit.collider.GetComponent<EnemyController>();
-            if (enemy != null)
+            if (enemy != null && enemy.CurrentHealth > 0)
             {
                 return enemy;
             }
@@ -677,26 +769,25 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(AttackStrength strength, int damage)
     {
         CurrentHealth = Mathf.Max(CurrentHealth - damage, 0);
+        HUD.lerpTimer = 0f;
 
         switch (strength)
         {
             case AttackStrength.Light:
                 AS.PlayOneShot(LightDamageSFX);
-                PA.Play(LightDamageAnim.name);
+/*                PA.Play(LightDamageAnim.name);*/
                 break;
 
             case AttackStrength.Medium:
                 AS.PlayOneShot(MediumDamageSFX);
-                PA.Play(MediumDamageAnim.name);
+/*                PA.Play(MediumDamageAnim.name);*/
                 break;
 
             case AttackStrength.Heavy:
                 AS.PlayOneShot(HeavyDamageSFX);
-                PA.Play(HeavyDamageAnim.name);
+/*                PA.Play(HeavyDamageAnim.name);*/
                 break;
         }
-
-        HUD.UpdateHPBars();
 
         if (CurrentHealth == 0)
             Die();
@@ -722,13 +813,16 @@ public class PlayerController : MonoBehaviour
     private void HealPlayer(int healAmount)
     {
         CurrentHealth += healAmount;
+        HUD.lerpTimer = 0f;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
-        HUD.UpdateHPBars();
     }
 
     private void Die()
     {
-        this.enabled = false;
+        canMove = false;
+        canJump = false;
+        canTurn = false;
+        IsAttacking = true;
         PlayerCamera.enabled = false;
         DeathCamera.enabled = true;
         AS.PlayOneShot(DeathSFX);

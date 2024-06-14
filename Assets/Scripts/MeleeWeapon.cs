@@ -4,17 +4,9 @@ using UnityEngine;
 public class MeleeWeapon : Weapon
 {
     [Header("Stamina Properties")]
-    public float StaminaRegenRate = 1f;
-    public float MaxStamina = 100;
-    public float CurrentStamina = 100;
     public float LightStaminaCost = 10f;
     public float MediumStaminaCost = 30f;
     public float HeavyStaminaCost = 50f;
-
-    private void OnEnable()
-    {
-        CurrentStamina = MaxStamina;
-    }
 
     public override void PerformLightAttack(PlayerController player)
     {
@@ -43,27 +35,6 @@ public class MeleeWeapon : Weapon
 
     public override bool ExpendResource(AttackStrength strength)
     {
-        switch (strength)
-        {
-            case AttackStrength.Light:
-                if (CurrentStamina < LightStaminaCost) return false;
-                CurrentStamina -= LightStaminaCost;
-                break;
-            case AttackStrength.Medium:
-                if (CurrentStamina < MediumStaminaCost) return false;
-                CurrentStamina -= MediumStaminaCost;
-                break;
-            case AttackStrength.Heavy:
-                if (CurrentStamina < HeavyStaminaCost) return false;
-                CurrentStamina -= HeavyStaminaCost;
-                break;
-        }
-        return true;
-    }
-
-    public void RegenerateStamina()
-    {
-        if (CurrentStamina < MaxStamina)
-            CurrentStamina += StaminaRegenRate * Time.deltaTime;
+        throw new System.NotImplementedException();
     }
 }
