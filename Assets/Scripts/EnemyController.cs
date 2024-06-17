@@ -54,7 +54,6 @@ public class EnemyController : MonoBehaviour
         if (CurrentHealth > 0)
         {
             GetComponent<AudioSource>().pitch = UnityEngine.Random.Range(0.95f, 1.15f);
-            Debug.Log("Enemy hit for " + damageAmount);
             switch (strength)
             {
                 case AttackStrength.Light:
@@ -74,11 +73,19 @@ public class EnemyController : MonoBehaviour
             }
 
             CurrentHealth -= damageAmount;
-
             if (CurrentHealth <= 0)
+            {
                 Die();
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Animator>().Play("Intro");
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Image>().color = new Color(255f / 255f, 91f / 255f, 21f / 255f);
+            }
+            else
+            {
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Image>().color = Color.white;
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Animator>().Play("Intro");
+            }
 
-            enemyHPBar.UpdateHealthBar();
+            enemyHPBar.lerpTimer = 0f;
             enemyHPBar.ShowName();
             enemyHPBar.ShowHealth();
         }
@@ -87,16 +94,23 @@ public class EnemyController : MonoBehaviour
     public IEnumerator ChokeDeath(int damageAmount)
     {
         CurrentHealth -= damageAmount;
-        enemyHPBar.UpdateHealthBar();
+        enemyHPBar.lerpTimer = 0f;
         enemyHPBar.ShowName();
         enemyHPBar.ShowHealth();
         yield return new WaitForSeconds(0.4f);
         if (CurrentHealth <= 0)
         {
+            FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Animator>().Play("Intro");
+            FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Image>().color = new Color(255f / 255f, 91f / 255f, 21f / 255f);
             GetComponent<AudioSource>().Stop();
             EnemyAnimator.Play(DeathAnim.name, -1, 0);
             GetComponent<AudioSource>().PlayOneShot(DeathSFX);
             Invoke("Respawn", 3f);
+        }
+        else
+        {
+            FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Image>().color = Color.white;
+            FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Animator>().Play("Intro");
         }
         yield return null;
     }
@@ -111,17 +125,27 @@ public class EnemyController : MonoBehaviour
 
             CurrentHealth -= damage;
 
-            if (CurrentHealth <= 0) Die();
-
-            enemyHPBar.UpdateHealthBar();
+            enemyHPBar.lerpTimer = 0f;
             enemyHPBar.ShowName();
             enemyHPBar.ShowHealth();
+
+            if (CurrentHealth <= 0)
+            {
+                Die();
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Animator>().Play("Intro");
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Image>().color = new Color(255f / 255f, 91f / 255f, 21f / 255f);
+            }
+            else
+            {
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Image>().color = Color.white;
+                FindObjectOfType<PlayerController>().HUD.transform.Find("Crosshair").Find("Hitmarker").GetComponent<Animator>().Play("Intro");
+            }
         }
     }
 
-    public void Knockback(Vector3 direction)
+    public void Knockback(Vector3 direction, float force)
     {
-        EnemyRigidBody.AddForce(direction * 30f, ForceMode.Impulse);
+        EnemyRigidBody.AddForce(direction * force, ForceMode.Impulse);
     }
 
     public void DealDamage(AttackStrength strength)

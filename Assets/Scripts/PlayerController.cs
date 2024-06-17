@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
     public CharacterController CC;
     private PlayerControls PC;
     public AudioSource AS;
-    private HUDManager HUD;
+    public HUDManager HUD;
     private Animator PA;
     float xRotation;
     float _Gravity;
@@ -107,7 +107,6 @@ public class PlayerController : MonoBehaviour
         Controls.LightAttack.performed += ctx => PerformLightAttack();
         Controls.MediumAttack.performed += ctx => PerformMediumAttack();
         Controls.HeavyAttack.performed += ctx => PerformHeavyAttack();
-        Controls.ToggleInventory.performed += ctx => ToggleInventory();
         Controls.EnemyLightAttack.performed += ctx => EnemyAttack(AttackStrength.Light);
         Controls.EnemyMediumAttack.performed += ctx => EnemyAttack(AttackStrength.Medium);
         Controls.EnemyHeavyAttack.performed += ctx => EnemyAttack(AttackStrength.Heavy);
@@ -170,14 +169,6 @@ public class PlayerController : MonoBehaviour
         if (GetPressedNumber() > -1)
             try { EquipWeapon(WeaponInventory[GetPressedNumber() - 1]); }
             catch { Debug.Log("No weapon at index " + (GetPressedNumber() - 1).ToString()); return; }
-    }
-
-    public void ToggleInventory()
-    {
-        if (FindObjectOfType<InventoryManager>().GetComponent<CanvasGroup>().alpha == 1)
-            FindObjectOfType<InventoryManager>().GetComponent<CanvasGroup>().alpha = 0;
-        else
-            FindObjectOfType<InventoryManager>().GetComponent<CanvasGroup>().alpha = 1;
     }
 
     #endregion
@@ -507,7 +498,7 @@ public class PlayerController : MonoBehaviour
                         {
                             Instantiate(medium_comicVFX, hit.point, Quaternion.identity);
                         }
-                        enemy.Knockback(transform.forward);
+                        enemy.Knockback(transform.forward, 30f);
                         enemy.TakeDamage(EquippedWeapon.MediumAttackDamage, strength);
                         break;
                     case AttackStrength.Heavy:
@@ -664,7 +655,7 @@ public class PlayerController : MonoBehaviour
                 {
                     case AttackStrength.Light:
                         Instantiate(light_comicVFX, hit.point, Quaternion.identity);
-                        enemy.Knockback(transform.forward);
+                        enemy.Knockback(transform.forward, 120f);
                         enemy.TakeDamage(EquippedWeapon.LightAttackDamage, strength);
                         break;
                     case AttackStrength.Medium:

@@ -15,10 +15,6 @@ public class HUDManager : MonoBehaviour
     public Image MeleeResourceBar;
     public Image MeleeResourceBar_Lazy;
 
-    [Header("Ranged HUD References")]
-    public GameObject RangedResourceObj;
-    public TextMeshProUGUI RangedResourceText;
-
     [Header("Special HUD References")]
     public GameObject SpecialResourceObj;
     public Image SpecialCooldownLight;
@@ -124,8 +120,6 @@ public class HUDManager : MonoBehaviour
 
     public void SwitchHUD(WeaponType type)
     {
-        /*        MeleeResourceObj.SetActive(type == WeaponType.Melee);*/
-        RangedResourceObj.SetActive(type == WeaponType.Ranged);
         SpecialResourceObj.SetActive(type == WeaponType.Special);
     }
 
@@ -135,11 +129,6 @@ public class HUDManager : MonoBehaviour
 
         switch (equippedWeapon.Type)
         {
-            case WeaponType.Ranged:
-                RangedWeapon rangedWeapon = (RangedWeapon)equippedWeapon;
-                RangedResourceText.text = $"{rangedWeapon.CurrentAmmo} / {rangedWeapon.MaxAmmo}";
-                break;
-
             case WeaponType.Special:
                 SpecialWeapon SpecialWeapon = (SpecialWeapon)equippedWeapon;
                 SpecialCooldownLight.fillAmount = 1f - (SpecialWeapon.LightSpecialCDTimer / SpecialWeapon.LightAttackCooldown);

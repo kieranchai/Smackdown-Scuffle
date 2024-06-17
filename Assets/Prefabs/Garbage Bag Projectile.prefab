@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5713946611735810590}
   - component: {fileID: 2693770685705445065}
   - component: {fileID: 6363270007113147263}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Garbage Bag Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}

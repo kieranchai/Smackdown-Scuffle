@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
-    public GameObject WeaponSlotPrefab;
-    public GameObject SelectionPrefab;
+    public GameObject equippedSlot;
+    public GameObject unequippedSlot;
+
+    public GameObject equippedPanel;
+    public GameObject unequippedPanel;
 
     private void Awake()
     {
@@ -21,33 +24,35 @@ public class InventoryManager : MonoBehaviour
         for (int i = 0; i < weaponInventory.Count; i++)
         {
             Weapon weapon = weaponInventory[i];
-            GameObject slot = CreateWeaponSlot(weapon, i + 1);
+            /*            GameObject slot = CreateWeaponSlot(weapon, i + 1);*/
 
-            if (weapon == playerController.EquippedWeapon)
-                HighlightSelectedWeapon(slot);
+            /*            if (weapon == playerController.EquippedWeapon)
+                            HighlightSelectedWeapon(slot);*/
         }
     }
 
     private void ClearInventory()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
-            Destroy(transform.GetChild(i).gameObject);
+        Destroy(equippedPanel.transform.GetChild(0).gameObject);
+
+        for (int i = unequippedPanel.transform.childCount - 1; i >= 0; i--)
+            Destroy(unequippedPanel.transform.GetChild(i).gameObject);
     }
 
-    private GameObject CreateWeaponSlot(Weapon weapon, int slotIndex)
-    {
-        GameObject slot = Instantiate(WeaponSlotPrefab, transform);
-        WeaponSlot weaponSlot = slot.GetComponent<WeaponSlot>();
+    /*    private GameObject CreateWeaponSlot(Weapon weapon, int slotIndex)
+        {
+            GameObject slot = Instantiate(WeaponSlotPrefab, transform);
+            WeaponSlot weaponSlot = slot.GetComponent<WeaponSlot>();
 
-        weaponSlot.Equip = weapon;
-        weaponSlot.Initialize();
-        weaponSlot.EquipKey.text = slotIndex.ToString();
+            weaponSlot.Equip = weapon;
+            weaponSlot.Initialize();
+            weaponSlot.EquipKey.text = slotIndex.ToString();
 
-        return slot;
-    }
+            return slot;
+        }*/
 
-    private void HighlightSelectedWeapon(GameObject slot)
-    {
-        Instantiate(SelectionPrefab, slot.transform);
-    }
+    /*    private void HighlightSelectedWeapon(GameObject slot)
+        {
+            Instantiate(SelectionPrefab, slot.transform);
+        }*/
 }
