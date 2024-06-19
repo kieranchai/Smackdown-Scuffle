@@ -15,6 +15,9 @@ public class TagTeamer : MonoBehaviour
     [HideInInspector]
     public int damage;
 
+    [SerializeField]
+    private ParticleSystem speedLinesVFX;
+
     private void Start()
     {
         GetComponent<Animator>().Play("Slam");
@@ -27,6 +30,7 @@ public class TagTeamer : MonoBehaviour
         Instantiate(explosionVFX, transform.position, Quaternion.identity);
         rb.isKinematic = true;
         GetComponent<Collider>().enabled = false;
+        speedLinesVFX.Stop();
         Destroy(transform.GetChild(0).gameObject);
 
         Invoke(nameof(Disappear), 2f);

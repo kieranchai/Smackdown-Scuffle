@@ -11,7 +11,14 @@ public class MeleeWeapon : Weapon
     public override void PerformLightAttack(PlayerController player)
     {
         player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
-        player.PlayAnimation(LightAttackAnim);
+        if (Type == WeaponType.Melee)
+        {
+            if (Random.Range(0, 2) == 0) player.PlayAnimation(LightAttackAnim);
+            else player.PlayAnimation(LightAttack2Anim);
+        } else
+        {
+            player.PlayAnimation(LightAttackAnim);
+        }
         player.InitialiseChairScript(AttackStrength.Light, LightAttackDamage);
         player.StartCoroutine(player.ResetAttackAfterDelay(LightAttackCooldown));
     }

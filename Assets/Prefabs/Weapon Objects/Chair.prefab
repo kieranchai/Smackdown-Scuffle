@@ -232,6 +232,7 @@ MonoBehaviour:
   strength: 0
   damage: 0
   _col: {fileID: 0}
+  hasHit: 0
 --- !u!1 &1103574939226161716
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,6 +927,7 @@ MonoBehaviour:
   strength: 0
   damage: 0
   _col: {fileID: 4655333561147353957}
+  hasHit: 0
 --- !u!1 &4202403739049204647
 GameObject:
   m_ObjectHideFlags: 0

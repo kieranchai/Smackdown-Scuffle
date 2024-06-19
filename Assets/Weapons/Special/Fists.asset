@@ -22,17 +22,17 @@ MonoBehaviour:
   LightAttackDelay: 0.25
   LightAttackCooldown: 5
   LightAttackDamage: 1
-  LightHitEffect: {fileID: 0}
+  LightHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
   LightAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
   LightImpactSFX: {fileID: 0}
   MediumAttackDelay: 0.32
-  MediumAttackCooldown: 0
+  MediumAttackCooldown: 10
   MediumAttackDamage: 2
   MediumHitEffect: {fileID: 0}
   MediumAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
   MediumImpactSFX: {fileID: 0}
   HeavyAttackDelay: 0.45
-  HeavyAttackCooldown: 0
+  HeavyAttackCooldown: 20
   HeavyAttackDamage: 3
   HeavyHitEffect: {fileID: 0}
   HeavyAttackSFX: {fileID: 8300000, guid: ff160a001a8542947bb86ecb079df7f2, type: 3}
@@ -40,6 +40,6 @@ MonoBehaviour:
   LightAttackAnim: {fileID: 7400000, guid: 71db6171b5bb1d64484d892edd0c263a, type: 2}
   MediumAttackAnim: {fileID: 7400000, guid: e30c7c2a0d343044bb3b064c9a7bac4e, type: 2}
   HeavyAttackAnim: {fileID: 7400000, guid: 11ea47341cf42bb4eb937bf5b2e26646, type: 2}
-  LightSpecialCDTimer: 5
+  LightSpecialCDTimer: 5.000528
   MediumSpecialCDTimer: 0
   HeavySpecialCDTimer: 0

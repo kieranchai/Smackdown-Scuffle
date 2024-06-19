@@ -233,7 +233,7 @@ GameObject:
   - component: {fileID: 9131669022684372976}
   - component: {fileID: 5110225452582177412}
   - component: {fileID: 8675034601647460129}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Trashbin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,7 +413,7 @@ GameObject:
   - component: {fileID: 4205777360434277908}
   - component: {fileID: 4543674112511347767}
   - component: {fileID: 9081949853907021981}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TrashbinLid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1400,7 +1400,7 @@ GameObject:
   - component: {fileID: 5668075670420684954}
   - component: {fileID: 8995401468156501644}
   - component: {fileID: 5131663988487453721}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TrashbinWheels
   m_TagString: Untagged
   m_Icon: {fileID: 0}

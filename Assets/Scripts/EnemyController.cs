@@ -37,6 +37,7 @@ public class EnemyController : MonoBehaviour
     public Animator EnemyAnimator;
     public GameObject EnemyPrefab;
     public GameObject SpawnParticles;
+    public GameObject levelImpactParticles;
     public Rigidbody EnemyRigidBody;
 
     public EnemyHP enemyHPBar;
@@ -191,4 +192,11 @@ public class EnemyController : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Level"))
+        {
+            Instantiate(levelImpactParticles, collision.contacts[0].point, Quaternion.identity);
+        }
+    }
 }

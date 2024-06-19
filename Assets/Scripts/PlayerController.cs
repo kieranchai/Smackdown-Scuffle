@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public float StaminaRegenRate = 5f;
     public float MaxStamina = 100;
     public float CurrentStamina = 100;
+    public ParticleSystem chargeParticles;
 
     [Header("Weapons")]
     public Weapon EquippedWeapon;
@@ -266,10 +267,6 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        //EquippedWeaponModel.transform.localScale = Vector3.one;
-        //EquippedWeaponModel.transform.localPosition = Vector3.zero;
-        //EquippedWeaponModel.transform.localRotation = Quaternion.identity;
-
         HUD.SwitchHUD(weapon.Type);
 
         if (weapon.Crosshair_Default != null)
@@ -401,6 +398,7 @@ public class PlayerController : MonoBehaviour
                         UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
                         break;
                 }
+                FindObjectOfType<InventoryManager>().UpdateAmmoCount();
                 break;
             case WeaponType.Special:
                 SpecialWeapon specialWeapon = (SpecialWeapon)EquippedWeapon;
@@ -575,6 +573,7 @@ public class PlayerController : MonoBehaviour
         canTurn = false;
         Velocity = Vector3.zero;
         float chargeTime = 0f;
+        chargeParticles.Play();
         speedLines.Play();
         while (!hitObstacle && chargeTime < 0.5f)
         {
@@ -584,6 +583,7 @@ public class PlayerController : MonoBehaviour
             chargeTime += Time.deltaTime;
             yield return null;
         }
+        chargeParticles.Stop();
         speedLines.Stop();
         PlayerCamera.fieldOfView = 75f;
         EquippedWeaponModel.GetComponent<Animator>().Play("End Light");
@@ -619,7 +619,7 @@ public class PlayerController : MonoBehaviour
             enemy.gameObject.transform.parent = null;
             enemy.gameObject.GetComponent<Rigidbody>().isKinematic = false;
             enemy.gameObject.GetComponent<Collider>().enabled = true;
-            enemy.gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * 55.0f, ForceMode.Impulse);
+            enemy.gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * 90f, ForceMode.Impulse);
             enemy.transform.rotation = Quaternion.Euler(enemy.transform.rotation.x, enemy.transform.rotation.y, 0f);
             enemy.StartCoroutine(enemy.ChokeDeath(enemy.MaxHealth));
             MoveSpeed = 5.0f;
@@ -792,6 +792,7 @@ public class PlayerController : MonoBehaviour
             wep.CurrentAmmo = Mathf.Min(wep.CurrentAmmo + reloadAmount, wep.MaxAmmo);
             RemoveHUDAmmoCircles();
             UpdateHUDAmmoCircles(wep.CurrentAmmo, wep.MaxAmmo);
+            FindObjectOfType<InventoryManager>().UpdateAmmoCount();
             if (ReloadSFX != null) GetComponent<AudioSource>().PlayOneShot(ReloadSFX);
         }
         wep.CurrentlyReloading = false;
@@ -826,5 +827,13 @@ public class PlayerController : MonoBehaviour
     public void ResetScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.name == "Car_03")
+        {
+            TakeDamage(AttackStrength.Medium, 10);
+        }
     }
 }

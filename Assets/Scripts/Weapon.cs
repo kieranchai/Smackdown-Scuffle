@@ -39,6 +39,7 @@ public abstract class Weapon : ScriptableObject
 
     [Header("Animations")]
     public AnimationClip LightAttackAnim;
+    public AnimationClip LightAttack2Anim;
     public AnimationClip MediumAttackAnim;
     public AnimationClip HeavyAttackAnim;
 

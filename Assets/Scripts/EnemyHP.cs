@@ -21,6 +21,8 @@ public class EnemyHP : MonoBehaviour
     public float lerpTimer;
     public float chipSpeed = 2f;
 
+    private float fadeTimer = 0.7f;
+
     private void Awake()
     {
         player = FindObjectOfType<PlayerController>();
@@ -38,7 +40,17 @@ public class EnemyHP : MonoBehaviour
             nameTime += Time.deltaTime;
             if (nameTime >= 0.5f)
             {
-                HideName();
+                fadeTimer -= Time.deltaTime;
+                if (fadeTimer < 0)
+                {
+                    float fadeSpeed = 2.5f;
+                    float a = enemyText.GetComponent<Image>().color.a - fadeSpeed * Time.deltaTime;
+                    enemyText.GetComponent<Image>().color = new Color(255f, 255f, 255f, a);
+                    if (enemyText.GetComponent<Image>().color.a < 0)
+                    {
+                        HideName();
+                    }
+                }
             }
         }
     }
@@ -67,6 +79,7 @@ public class EnemyHP : MonoBehaviour
 
     public void ShowName()
     {
+        enemyText.GetComponent<Image>().color = new Color(255f, 255f, 255f, 1);
         nameShown = true;
         nameTime = 0f;
         enemyText.gameObject.SetActive(true);

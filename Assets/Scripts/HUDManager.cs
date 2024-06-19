@@ -131,9 +131,9 @@ public class HUDManager : MonoBehaviour
         {
             case WeaponType.Special:
                 SpecialWeapon SpecialWeapon = (SpecialWeapon)equippedWeapon;
-                SpecialCooldownLight.fillAmount = 1f - (SpecialWeapon.LightSpecialCDTimer / SpecialWeapon.LightAttackCooldown);
-                SpecialCooldownMedium.fillAmount = 1f - (SpecialWeapon.MediumSpecialCDTimer / SpecialWeapon.MediumAttackCooldown);
-                SpecialCooldownHeavy.fillAmount = 1f - (SpecialWeapon.HeavySpecialCDTimer / SpecialWeapon.HeavyAttackCooldown);
+                SpecialCooldownLight.fillAmount = (SpecialWeapon.LightSpecialCDTimer / SpecialWeapon.LightAttackCooldown);
+                SpecialCooldownMedium.fillAmount = (SpecialWeapon.MediumSpecialCDTimer / SpecialWeapon.MediumAttackCooldown);
+                SpecialCooldownHeavy.fillAmount = (SpecialWeapon.HeavySpecialCDTimer / SpecialWeapon.HeavyAttackCooldown);
                 break;
         }
     }
