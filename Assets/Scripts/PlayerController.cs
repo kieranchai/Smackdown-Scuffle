@@ -348,7 +348,7 @@ public class PlayerController : MonoBehaviour
         {
             GameObject ammoCircleUI = Instantiate(ammoCircle, HUD.Crosshair.transform.Find("Ammo Counter"));
 
-            if (i * 2 > currentAmmo) ammoCircleUI.GetComponent<Image>().color = new Color(1, 1, 1, 0.3f);
+            if (i * 2 > currentAmmo) ammoCircleUI.GetComponent<Image>().color = new Color(1, 1, 1, 0.2f);
         }
     }
 
@@ -766,22 +766,74 @@ public class PlayerController : MonoBehaviour
         {
             case AttackStrength.Light:
                 AS.PlayOneShot(LightDamageSFX);
-/*                PA.Play(LightDamageAnim.name);*/
+                /*                PA.Play(LightDamageAnim.name);*/
                 break;
 
             case AttackStrength.Medium:
                 AS.PlayOneShot(MediumDamageSFX);
-/*                PA.Play(MediumDamageAnim.name);*/
+                /*                PA.Play(MediumDamageAnim.name);*/
                 break;
 
             case AttackStrength.Heavy:
                 AS.PlayOneShot(HeavyDamageSFX);
-/*                PA.Play(HeavyDamageAnim.name);*/
+                /*                PA.Play(HeavyDamageAnim.name);*/
                 break;
+        }
+
+
+        if (CurrentHealth <= MaxHealth / 3)
+        {
+            HUD.FadeInDamageDealt(strength, "left", true);
+            HUD.FadeInDamageDealt(strength, "right", true);
+            HUD.FadeInDamageDealt(strength, "up", true);
+            HUD.FadeInDamageDealt(strength, "down", true);
+        }
+        else
+        {
+            HUD.FadeInDamageDealt(strength, CheckEnemyDirection());
         }
 
         if (CurrentHealth == 0)
             Die();
+    }
+
+    string CheckEnemyDirection()
+    {
+        // Get the positions of the player and enemy
+        Vector3 playerPos = transform.position;
+        Vector3 enemyPos = FindObjectOfType<EnemyController>().transform.position;
+
+        // Calculate the vector from the player to the enemy
+        Vector3 direction = enemyPos - playerPos;
+
+        // Calculate the angle between the player's forward direction and the enemy direction
+        float angle = Vector3.Angle(transform.forward, direction);
+
+        // Determine the direction based on the angle
+        string directionString = "";
+
+        if (angle < 45f)
+        {
+            directionString = "up";
+        }
+        else if (angle > 135f)
+        {
+            directionString = "down";
+        }
+        else
+        {
+            // Determine left or right based on cross product
+            Vector3 cross = Vector3.Cross(transform.forward, direction);
+            if (cross.y > 0)
+            {
+                directionString = "right";
+            }
+            else
+            {
+                directionString = "left";
+            }
+        }
+        return directionString;
     }
 
     internal System.Collections.IEnumerator Reload(float reloadDuration, RangedWeapon wep, int reloadAmount, AudioClip ReloadSFX = null)
@@ -805,6 +857,7 @@ public class PlayerController : MonoBehaviour
     private void HealPlayer(int healAmount)
     {
         CurrentHealth += healAmount;
+        if (CurrentHealth >= MaxHealth / 3) HUD.FadeOutLowHealth();
         HUD.lerpTimer = 0f;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
