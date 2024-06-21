@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 9929a9ab10fa36642a76ba28c7cf59a0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Icon: {instanceID: 0}
+  - Model: {instanceID: 0}
+  - HitEffect: {instanceID: 0}
+  - AttackSFX: {instanceID: 0}
+  - ImpactSFX: {instanceID: 0}
+  - LightAttackAnim: {fileID: 7400000, guid: 74a3daa1180d0374abcd64c0aaccbce3, type: 2}
+  - MediumAttackAnim: {instanceID: 0}
+  - HeavyAttackAnim: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

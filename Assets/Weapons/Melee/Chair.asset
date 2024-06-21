@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54d987520824f494c83b755f3680bf6f, type: 3}
+  m_Name: Chair
+  m_EditorClassIdentifier: 
+  Name: MELEE
+  Icon: {fileID: 21300000, guid: 7effef97fb5b91b4f91fa3f6bf3d9e21, type: 3}
+  Crosshair_Default: {fileID: 21300000, guid: 17967770527d4754c96e402778aece01, type: 3}
+  Crosshair_Enemy: {fileID: 21300000, guid: e0e642b95531bfb4383432d0ed908048, type: 3}
+  Type: 0
+  Prefab: {fileID: 903114766433989454, guid: bf28cff806bd118479c1703b16987f53, type: 3}
+  AttackRange: 2.5
+  LightAttackDelay: 0.3
+  LightAttackCooldown: 0.66
+  LightAttackDamage: 1
+  LightHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
+  LightAttackSFX: {fileID: 8300000, guid: 8130461d7768b5942953e195a3394090, type: 3}
+  LightImpactSFX: {fileID: 8300000, guid: 13d8501a64fede140b58c93511271b3d, type: 3}
+  MediumAttackDelay: 0.35
+  MediumAttackCooldown: 1
+  MediumAttackDamage: 2
+  MediumHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
+  MediumAttackSFX: {fileID: 8300000, guid: 8130461d7768b5942953e195a3394090, type: 3}
+  MediumImpactSFX: {fileID: 8300000, guid: 13d8501a64fede140b58c93511271b3d, type: 3}
+  HeavyAttackDelay: 0.41
+  HeavyAttackCooldown: 1
+  HeavyAttackDamage: 3
+  HeavyHitEffect: {fileID: 2631099683616218207, guid: 5a822b323100eac4ebd2562303ee7198, type: 3}
+  HeavyAttackSFX: {fileID: 8300000, guid: 8130461d7768b5942953e195a3394090, type: 3}
+  HeavyImpactSFX: {fileID: 8300000, guid: 13d8501a64fede140b58c93511271b3d, type: 3}
+  LightAttackAnim: {fileID: 7400000, guid: 878e9a7eccc9be7468af506c297a8929, type: 2}
+  LightAttack2Anim: {fileID: 7400000, guid: 39101ef7c536c8c4498944d595c36dc5, type: 2}
+  MediumAttackAnim: {fileID: 7400000, guid: 81f14e1155f5370449b4af79e2701eac, type: 2}
+  HeavyAttackAnim: {fileID: 7400000, guid: ee9d335b9a7fcca4b8f5c76afe0c2700, type: 2}
+  LightStaminaCost: 10
+  MediumStaminaCost: 20
+  HeavyStaminaCost: 33
