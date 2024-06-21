@@ -77,8 +77,10 @@ public class InventoryManager : MonoBehaviour
     public void UpdateAmmoCount()
     {
         PlayerController playerController = FindObjectOfType<PlayerController>();
-        RangedWeapon rweap = (RangedWeapon)FindObjectOfType<PlayerController>().EquippedWeapon;
-        equippedPanel.transform.GetChild(0).gameObject.transform.Find("Ammo").GetComponent<TMP_Text>().text = $"{rweap.CurrentAmmo}/{rweap.MaxAmmo}";
+        if (FindObjectOfType<PlayerController>().EquippedWeapon as RangedWeapon) {
+            RangedWeapon rweap = (RangedWeapon)FindObjectOfType<PlayerController>().EquippedWeapon;
+            equippedPanel.transform.GetChild(0).gameObject.transform.Find("Ammo").GetComponent<TMP_Text>().text = $"{rweap.CurrentAmmo}/{rweap.MaxAmmo}";
+        }
     }
 
     private GameObject CreateWeaponSlot(Weapon weapon, int slotIndex)

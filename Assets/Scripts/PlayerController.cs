@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
+using UnityEngine.Rendering.PostProcessing;
 
 public class PlayerController : MonoBehaviour
 {
@@ -47,6 +48,8 @@ public class PlayerController : MonoBehaviour
     public GameObject PlayerHead;
     public Camera DeathCamera;
     public float Sensitivity;
+    public PostProcessVolume PostProcessVolume;
+    private Vignette chokeVignette;
 
     [Header("UI Refs")]
     public GameObject ammoCircle;
@@ -85,6 +88,13 @@ public class PlayerController : MonoBehaviour
     float xRotation;
     float _Gravity;
     bool initialSpecialEquip = true;
+    float shakeDuration = 0f;
+    float shakeAmount = 0.7f;
+    float decreaseFactor = 0.7f;
+    bool camShake = false;
+    bool isChoking = false;
+
+    Vector3 originalPos;
 
     private void Awake()
     {
@@ -96,6 +106,7 @@ public class PlayerController : MonoBehaviour
         HUD = FindObjectOfType<HUDManager>();
         EquipWeapon(WeaponInventory[0]);
         CurrentStamina = MaxStamina;
+        chokeVignette = PostProcessVolume.profile.GetSetting<Vignette>();
     }
 
     private void OnEnable()
@@ -111,6 +122,8 @@ public class PlayerController : MonoBehaviour
         Controls.EnemyLightAttack.performed += ctx => EnemyAttack(AttackStrength.Light);
         Controls.EnemyMediumAttack.performed += ctx => EnemyAttack(AttackStrength.Medium);
         Controls.EnemyHeavyAttack.performed += ctx => EnemyAttack(AttackStrength.Heavy);
+
+        originalPos = PlayerCamera.transform.localPosition;
     }
 
     private void OnDisable()
@@ -123,12 +136,38 @@ public class PlayerController : MonoBehaviour
         GroundedCheck();
         GetInventoryInput();
         RegenerateStamina();
+        HUD.UpdateStaminaBar(this);
         HandleResources();
         GetDebugInputs();
 
         // UI
         CheckIfXHairOverEnemy();
         HUD.UpdateHPBars(this);
+
+        if (camShake)
+        {
+            if (shakeDuration > 0)
+            {
+                PlayerCamera.transform.localPosition = originalPos + UnityEngine.Random.insideUnitSphere * shakeAmount;
+                shakeDuration -= Time.deltaTime * decreaseFactor;
+            }
+            else
+            {
+                shakeDuration = 0f;
+                PlayerCamera.transform.localPosition = originalPos;
+                camShake = false;
+                decreaseFactor = 0.7f;
+            }
+        }
+
+        if (isChoking)
+        {
+            chokeVignette.intensity.value = Mathf.Lerp(chokeVignette.intensity.value, 0.3f, 0.45f * Time.deltaTime);
+        }
+        else
+        {
+            chokeVignette.intensity.value = Mathf.Lerp(chokeVignette.intensity.value, 0f, 3f * Time.deltaTime);
+        }
     }
 
 
@@ -141,6 +180,7 @@ public class PlayerController : MonoBehaviour
     private void LateUpdate()
     {
         CameraLook();
+        HUD.RegenStaminaBar(this);
     }
 
     #region Input
@@ -320,7 +360,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         HUD.UpdateResources(this);
-        HUD.UpdateStaminaBar(this);
     }
 
     public void RegenerateStamina()
@@ -361,15 +400,27 @@ public class PlayerController : MonoBehaviour
                 switch (strength)
                 {
                     case AttackStrength.Light:
-                        if (CurrentStamina < meleeWeapon.LightStaminaCost) return false;
+                        if (CurrentStamina < meleeWeapon.LightStaminaCost)
+                        {
+                            HUD.StaminaPanel.GetComponent<Animator>().Play("StaminaShake");
+                            return false;
+                        }
                         CurrentStamina -= meleeWeapon.LightStaminaCost;
                         break;
                     case AttackStrength.Medium:
-                        if (CurrentStamina < meleeWeapon.MediumStaminaCost) return false;
+                        if (CurrentStamina < meleeWeapon.MediumStaminaCost)
+                        {
+                            HUD.StaminaPanel.GetComponent<Animator>().Play("StaminaShake");
+                            return false;
+                        }
                         CurrentStamina -= meleeWeapon.MediumStaminaCost;
                         break;
                     case AttackStrength.Heavy:
-                        if (CurrentStamina < meleeWeapon.HeavyStaminaCost) return false;
+                        if (CurrentStamina < meleeWeapon.HeavyStaminaCost)
+                        {
+                            HUD.StaminaPanel.GetComponent<Animator>().Play("StaminaShake");
+                            return false;
+                        }
                         CurrentStamina -= meleeWeapon.HeavyStaminaCost;
                         break;
                 }
@@ -503,6 +554,7 @@ public class PlayerController : MonoBehaviour
                         if (EquippedWeapon.Type == WeaponType.Melee)
                         {
                             Instantiate(heavy_comicVFX, hit.point + new Vector3(0, 0, 0.2f), Quaternion.identity);
+                            CameraShake(AttackStrength.Heavy, false, 0, true, 0.8f);
                         }
                         enemy.TakeDamage(EquippedWeapon.HeavyAttackDamage, strength);
                         break;
@@ -523,6 +575,7 @@ public class PlayerController : MonoBehaviour
                         Instantiate(EquippedWeapon.MediumHitEffect, hit.point, Quaternion.identity);
                     break;
                 case AttackStrength.Heavy:
+                    if (EquippedWeapon.Type == WeaponType.Melee) CameraShake(AttackStrength.Light);
                     if (EquippedWeapon.HeavyImpactSFX != null)
                         AS.PlayOneShot(EquippedWeapon.HeavyImpactSFX);
                     if (EquippedWeapon.HeavyHitEffect != null)
@@ -610,8 +663,11 @@ public class PlayerController : MonoBehaviour
             canJump = false;
 
             float chokeTime = 0f;
+            CameraShake(AttackStrength.Light, true, 3f, true, 0.02f);
+            isChoking = true;
             while (chokeTime < 3.9f)
             {
+                if (chokeTime >= 3.7f) isChoking = false;
                 chokeTime += Time.deltaTime;
                 yield return null;
             }
@@ -666,6 +722,7 @@ public class PlayerController : MonoBehaviour
             switch (strength)
             {
                 case AttackStrength.Light:
+                    CameraShake(AttackStrength.Medium);
                     if (EquippedWeapon.LightImpactSFX != null)
                         AS.PlayOneShot(EquippedWeapon.LightImpactSFX);
                     if (EquippedWeapon.LightHitEffect != null)
@@ -760,26 +817,30 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(AttackStrength strength, int damage)
     {
         CurrentHealth = Mathf.Max(CurrentHealth - damage, 0);
+        HUD.FlashHPBars(this);
+        HUD.PlayerHPPanel.GetComponent<Animator>().Play("HealthShake");
+
         HUD.lerpTimer = 0f;
 
         switch (strength)
         {
             case AttackStrength.Light:
                 AS.PlayOneShot(LightDamageSFX);
-                /*                PA.Play(LightDamageAnim.name);*/
+                PA.Play(LightDamageAnim.name);
                 break;
 
             case AttackStrength.Medium:
                 AS.PlayOneShot(MediumDamageSFX);
-                /*                PA.Play(MediumDamageAnim.name);*/
+                PA.Play(MediumDamageAnim.name);
                 break;
 
             case AttackStrength.Heavy:
                 AS.PlayOneShot(HeavyDamageSFX);
-                /*                PA.Play(HeavyDamageAnim.name);*/
+                PA.Play(HeavyDamageAnim.name);
                 break;
         }
 
+        CameraShake(strength);
 
         if (CurrentHealth <= MaxHealth / 3)
         {
@@ -795,6 +856,29 @@ public class PlayerController : MonoBehaviour
 
         if (CurrentHealth == 0)
             Die();
+    }
+
+    public void CameraShake(AttackStrength strength, bool customDuration = false, float _shakeDuration = 0f, bool customAmount = false, float _shakeAmount = 0f)
+    {
+        camShake = true;
+        switch (strength)
+        {
+            case AttackStrength.Light:
+                shakeDuration = 0.1f;
+                shakeAmount = 0.1f;
+                decreaseFactor = 1.0f;
+                break;
+            case AttackStrength.Medium:
+                shakeDuration = 0.1f;
+                shakeAmount = 0.3f;
+                break;
+            case AttackStrength.Heavy:
+                shakeDuration = 0.1f;
+                shakeAmount = 0.5f;
+                break;
+        }
+        if (customDuration) shakeDuration = _shakeDuration;
+        if (customAmount) shakeAmount = _shakeAmount;
     }
 
     string CheckEnemyDirection()

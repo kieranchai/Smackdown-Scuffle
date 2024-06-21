@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 
 public class HUDManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class HUDManager : MonoBehaviour
     public Image PlayerHPBar;
     public Image PlayerHPBar_Lazy;
     public Image Crosshair;
+    public GameObject PlayerHPPanel;
+    public GameObject StaminaPanel;
 
     [Header("Melee HUD References")]
     public GameObject MeleeResourceObj;
@@ -126,10 +129,59 @@ public class HUDManager : MonoBehaviour
             MeleeResourceBar_Lazy.fillAmount = Mathf.Lerp(stamina_LazyF, hFraction, percentComplete);
         }
 
+
+    }
+
+    public void RegenStaminaBar(PlayerController player)
+    {
+        float staminaF = MeleeResourceBar.fillAmount;
+        float stamina_LazyF = MeleeResourceBar_Lazy.fillAmount;
+        float hFraction = (float)player.CurrentStamina / player.MaxStamina;
+
         if (staminaF < hFraction)
         {
             MeleeResourceBar.fillAmount = hFraction;
+            MeleeResourceBar_Lazy.fillAmount = hFraction;
         }
+    }
+
+    public void FlashHPBars(PlayerController player)
+    {
+        PlayerHPBar.color = Color.white;
+        StartCoroutine(FlashHealth(player));
+    }
+    IEnumerator FlashHealth(PlayerController player)
+    {
+        bool isFlickering = false;
+        PlayerHPBar.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        PlayerHPBar.color = Color.white;
+        yield return new WaitForSeconds(0.1f);
+        PlayerHPBar.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        PlayerHPBar.color = new Color(255f, 255f, 255f);
+
+        if (player.CurrentHealth <= player.MaxHealth / 3)
+        {
+            isFlickering = true;
+        }
+
+        while (isFlickering)
+        {
+            PlayerHPBar.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            PlayerHPBar.color = Color.white;
+            yield return new WaitForSeconds(0.1f);
+
+            if (player.CurrentHealth > player.MaxHealth / 3)
+            {
+                isFlickering = false;
+                //stop heartbeat
+            }
+            yield return null;
+        }
+
+        yield return null;
     }
 
     public void SwitchHUD(WeaponType type)
@@ -267,9 +319,16 @@ public class HUDManager : MonoBehaviour
             // Start FadeOut coroutine after fading in
             Coroutine fadeOutCoroutine = StartCoroutine(FadeOutVignette(accumulatedFadeStrength, edge));
             fadeOutCoroutines[edge] = fadeOutCoroutine;
-        } else
+        }
+        else
         {
-            StopAllCoroutines();
+            foreach (KeyValuePair<Image, Coroutine> entry in fadeOutCoroutines)
+            {
+                if (entry.Value != null)
+                {
+                    StopCoroutine(entry.Value);
+                }
+            }
         }
     }
 

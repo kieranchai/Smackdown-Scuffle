@@ -71,7 +71,17 @@ public class Trashbin : MonoBehaviour
                 if (hasDamagedEnemy) return;
                 hasDamagedEnemy = true;
                 EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
-                Instantiate(player.ranged_heavy_comicVFX, collision.contacts[0].point + new Vector3(0, 0, 0.2f), Quaternion.identity);
+                GameObject vfx = Instantiate(player.ranged_heavy_comicVFX, collision.contacts[0].point + new Vector3(0, 0, 0.2f), Quaternion.identity);
+
+                float distance = Vector3.Distance(vfx.transform.position, player.transform.position);
+                float scaleFactor = 1.0f + distance * 0.15f;
+                vfx.transform.GetChild(1).transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+                for (int i = 0; i < vfx.transform.GetChild(1).childCount; i++)
+                {
+                    Transform childTransform = vfx.transform.GetChild(1).GetChild(i);
+                    childTransform.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+                }
+
                 enemy.TakeDamage(player.EquippedWeapon.HeavyAttackDamage, AttackStrength.Heavy);
             }
         }

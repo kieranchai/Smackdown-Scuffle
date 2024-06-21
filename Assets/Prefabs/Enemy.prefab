@@ -5717,10 +5717,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.74
-  m_Height: 2
+  m_Radius: 0.7882201
+  m_Height: 2.2245638
   m_Direction: 1
-  m_Center: {x: 0, y: 1.02, z: 0.2}
+  m_Center: {x: 0, y: 1.1322819, z: 0.15177983}
 --- !u!82 &3021051325308585281
 AudioSource:
   m_ObjectHideFlags: 0

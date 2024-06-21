@@ -23,7 +23,7 @@ public class ChairEvents : MonoBehaviour
         float moveTime = 0f;
         while (moveTime < 0.2f)
         {
-            player.CC.Move(player.transform.forward * 5f * Time.deltaTime);
+            player.CC.Move(player.transform.forward * 8f * Time.deltaTime);
             moveTime += Time.deltaTime;
             yield return null;
         }
@@ -37,7 +37,10 @@ public class ChairEvents : MonoBehaviour
             if (player.EquippedWeapon.LightImpactSFX != null)
                 player.AS.PlayOneShot(player.EquippedWeapon.LightImpactSFX);
             if (player.EquippedWeapon.LightHitEffect != null)
+            {
+                player.CameraShake(AttackStrength.Light);
                 Instantiate(player.EquippedWeapon.LightHitEffect, collision.ClosestPoint(transform.position), Quaternion.identity);
+            }
             EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
             if (collision.gameObject.GetComponent<EnemyController>())
             {

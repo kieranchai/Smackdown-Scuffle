@@ -32,7 +32,7 @@ public class TagTeamer : MonoBehaviour
         GetComponent<Collider>().enabled = false;
         speedLinesVFX.Stop();
         Destroy(transform.GetChild(0).gameObject);
-
+        FindAnyObjectByType<PlayerController>().CameraShake(AttackStrength.Heavy, true, 0.25f);
         Invoke(nameof(Disappear), 2f);
     }
 
@@ -47,7 +47,6 @@ public class TagTeamer : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<EnemyController>().GetSlammed(damage);
-            // Play dazed particles on Enemy
         }
     }
 }
