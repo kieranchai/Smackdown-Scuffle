@@ -32,6 +32,6 @@ public class WeaponSlot : MonoBehaviour
     public void EquipWeapon()
     {
         playerController.EquipWeapon(Equip);
-        hudManager.SwitchHUD(Equip.Type);
+        hudManager.SwitchHUD(Equip);
     }
 }

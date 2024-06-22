@@ -307,7 +307,7 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        HUD.SwitchHUD(weapon.Type);
+        HUD.SwitchHUD(weapon);
 
         if (weapon.Crosshair_Default != null)
         {
@@ -431,19 +431,31 @@ public class PlayerController : MonoBehaviour
                 switch (strength)
                 {
                     case AttackStrength.Light:
-                        if (rangedWeapon.CurrentAmmo < rangedWeapon.LightAmmoCost) return false;
+                        if (rangedWeapon.CurrentAmmo < rangedWeapon.LightAmmoCost)
+                        {
+                            EquippedWeaponModel.GetComponent<Animator>().Play("No Ammo");
+                            return false;
+                        }
                         rangedWeapon.CurrentAmmo -= rangedWeapon.LightAmmoCost;
                         RemoveHUDAmmoCircles();
                         UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
                         break;
                     case AttackStrength.Medium:
-                        if (rangedWeapon.CurrentAmmo < rangedWeapon.MediumAmmoCost) return false;
+                        if (rangedWeapon.CurrentAmmo < rangedWeapon.MediumAmmoCost)
+                        {
+                            EquippedWeaponModel.GetComponent<Animator>().Play("No Ammo");
+                            return false;
+                        }
                         rangedWeapon.CurrentAmmo -= rangedWeapon.MediumAmmoCost;
                         RemoveHUDAmmoCircles();
                         UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
                         break;
                     case AttackStrength.Heavy:
-                        if (rangedWeapon.CurrentAmmo < rangedWeapon.LightAmmoCost) return false;
+                        if (rangedWeapon.CurrentAmmo < rangedWeapon.LightAmmoCost)
+                        {
+                            EquippedWeaponModel.GetComponent<Animator>().Play("No Ammo");
+                            return false;
+                        }
                         rangedWeapon.CurrentAmmo -= rangedWeapon.CurrentAmmo;
                         RemoveHUDAmmoCircles();
                         UpdateHUDAmmoCircles(rangedWeapon.CurrentAmmo, rangedWeapon.MaxAmmo);
@@ -456,15 +468,27 @@ public class PlayerController : MonoBehaviour
                 switch (strength)
                 {
                     case AttackStrength.Light:
-                        if (specialWeapon.LightSpecialCDTimer < specialWeapon.LightAttackCooldown) return false;
+                        if (specialWeapon.LightSpecialCDTimer < specialWeapon.LightAttackCooldown)
+                        {
+                            EquippedWeaponModel.GetComponent<Animator>().Play("Not Ready");
+                            return false;
+                        }
                         specialWeapon.LightSpecialCDTimer = 0;
                         break;
                     case AttackStrength.Medium:
-                        if (specialWeapon.MediumSpecialCDTimer < specialWeapon.MediumAttackCooldown) return false;
+                        if (specialWeapon.MediumSpecialCDTimer < specialWeapon.MediumAttackCooldown)
+                        {
+                            EquippedWeaponModel.GetComponent<Animator>().Play("Not Ready");
+                            return false;
+                        }
                         specialWeapon.MediumSpecialCDTimer = 0;
                         break;
                     case AttackStrength.Heavy:
-                        if (specialWeapon.HeavySpecialCDTimer < specialWeapon.HeavyAttackCooldown) return false;
+                        if (specialWeapon.HeavySpecialCDTimer < specialWeapon.HeavyAttackCooldown)
+                        {
+                            EquippedWeaponModel.GetComponent<Animator>().Play("Not Ready");
+                            return false;
+                        }
                         specialWeapon.HeavySpecialCDTimer = 0;
                         break;
                 }
@@ -663,14 +687,22 @@ public class PlayerController : MonoBehaviour
             canJump = false;
 
             float chokeTime = 0f;
-            CameraShake(AttackStrength.Light, true, 3f, true, 0.02f);
+            CameraShake(AttackStrength.Light, true, 3f, true, 0.05f);
             isChoking = true;
+            float initialCamFOV = PlayerCamera.fieldOfView;
             while (chokeTime < 3.9f)
             {
-                if (chokeTime >= 3.7f) isChoking = false;
+                if (chokeTime >= 3.7f)
+                {
+                    isChoking = false;
+                    PlayerCamera.fieldOfView += 7.0f * Time.deltaTime;
+                    PlayerCamera.fieldOfView = Mathf.Max(PlayerCamera.fieldOfView, initialCamFOV);
+                }
+                else PlayerCamera.fieldOfView -= 1.5f * Time.deltaTime;
                 chokeTime += Time.deltaTime;
                 yield return null;
             }
+            PlayerCamera.fieldOfView = initialCamFOV;
 
             enemy.gameObject.transform.parent = null;
             enemy.gameObject.GetComponent<Rigidbody>().isKinematic = false;
@@ -942,6 +974,7 @@ public class PlayerController : MonoBehaviour
     {
         CurrentHealth += healAmount;
         if (CurrentHealth >= MaxHealth / 3) HUD.FadeOutLowHealth();
+        HUD.PlayHealAnim();
         HUD.lerpTimer = 0f;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
