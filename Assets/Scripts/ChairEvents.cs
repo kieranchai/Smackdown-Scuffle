@@ -13,6 +13,11 @@ public class ChairEvents : MonoBehaviour
     public Collider _col;
     public bool hasHit = false;
 
+    private void Awake()
+    {
+        player = FindAnyObjectByType<PlayerController>();
+    }
+
     public void MoveForward()
     {
         StartCoroutine(ForcedFwdMovement());
@@ -34,8 +39,7 @@ public class ChairEvents : MonoBehaviour
         if (!hasHit)
         {
             hasHit = true;
-            if (player.EquippedWeapon.LightImpactSFX != null)
-                player.AS.PlayOneShot(player.EquippedWeapon.LightImpactSFX);
+
             if (player.EquippedWeapon.LightHitEffect != null)
             {
                 player.CameraShake(AttackStrength.Light);

@@ -61,8 +61,6 @@ public class Trashbin : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Level"))
         {
             hasCollided = true;
-            if (player.EquippedWeapon.HeavyImpactSFX != null)
-                player.AS.PlayOneShot(player.EquippedWeapon.HeavyImpactSFX);
             if (player.EquippedWeapon.HeavyHitEffect != null)
                 Instantiate(player.EquippedWeapon.HeavyHitEffect, collision.contacts[0].point, Quaternion.identity);
 

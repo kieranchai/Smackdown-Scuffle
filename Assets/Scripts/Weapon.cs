@@ -18,24 +18,18 @@ public abstract class Weapon : ScriptableObject
     public float LightAttackCooldown = 1f;
     public int LightAttackDamage = 1;
     public GameObject LightHitEffect;
-    public AudioClip LightAttackSFX;
-    public AudioClip LightImpactSFX;
 
     [Header("Medium Attack Properties")]
     public float MediumAttackDelay = 0.5f;
     public float MediumAttackCooldown = 1f;
     public int MediumAttackDamage = 2;
     public GameObject MediumHitEffect;
-    public AudioClip MediumAttackSFX;
-    public AudioClip MediumImpactSFX;
 
     [Header("Heavy Attack Properties")]
     public float HeavyAttackDelay = 0.5f;
     public float HeavyAttackCooldown = 1f;
     public int HeavyAttackDamage = 3;
     public GameObject HeavyHitEffect;
-    public AudioClip HeavyAttackSFX;
-    public AudioClip HeavyImpactSFX;
 
     [Header("Animations")]
     public AnimationClip LightAttackAnim;

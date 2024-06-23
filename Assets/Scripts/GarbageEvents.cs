@@ -10,6 +10,11 @@ public class GarbageEvents : MonoBehaviour
     public GameObject GarbageCanObject;
     public GameObject GarbageObject;
 
+    private void Awake()
+    {
+        player = FindAnyObjectByType<PlayerController>();
+    }
+
     public void ThrowGarbage()
     {
         GameObject garbage = Instantiate(GarbageObject, player.garbageSpawnLocation.position, GarbageObject.transform.rotation);

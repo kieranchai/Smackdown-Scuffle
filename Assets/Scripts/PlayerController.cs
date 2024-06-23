@@ -587,21 +587,22 @@ public class PlayerController : MonoBehaviour
             switch (strength)
             {
                 case AttackStrength.Light:
-                    if (EquippedWeapon.LightImpactSFX != null)
-                        AS.PlayOneShot(EquippedWeapon.LightImpactSFX);
                     if (EquippedWeapon.LightHitEffect != null)
                         Instantiate(EquippedWeapon.LightHitEffect, hit.point, Quaternion.identity);
                     break;
                 case AttackStrength.Medium:
-                    if (EquippedWeapon.MediumImpactSFX != null)
-                        AS.PlayOneShot(EquippedWeapon.MediumImpactSFX);
+                    if (EquippedWeapon.Type == WeaponType.Melee)
+                    {
+                        Instantiate(medium_comicVFX, hit.point, Quaternion.identity);
+                    }
                     if (EquippedWeapon.MediumHitEffect != null)
                         Instantiate(EquippedWeapon.MediumHitEffect, hit.point, Quaternion.identity);
                     break;
                 case AttackStrength.Heavy:
-                    if (EquippedWeapon.Type == WeaponType.Melee) CameraShake(AttackStrength.Light);
-                    if (EquippedWeapon.HeavyImpactSFX != null)
-                        AS.PlayOneShot(EquippedWeapon.HeavyImpactSFX);
+                    if (EquippedWeapon.Type == WeaponType.Melee)
+                    {
+                        CameraShake(AttackStrength.Heavy, false, 0, true, 0.8f);
+                    }
                     if (EquippedWeapon.HeavyHitEffect != null)
                         Instantiate(EquippedWeapon.HeavyHitEffect, hit.point, Quaternion.identity);
                     break;
@@ -755,14 +756,10 @@ public class PlayerController : MonoBehaviour
             {
                 case AttackStrength.Light:
                     CameraShake(AttackStrength.Medium);
-                    if (EquippedWeapon.LightImpactSFX != null)
-                        AS.PlayOneShot(EquippedWeapon.LightImpactSFX);
                     if (EquippedWeapon.LightHitEffect != null)
                         Instantiate(EquippedWeapon.LightHitEffect, hit.point, Quaternion.identity);
                     break;
                 case AttackStrength.Medium:
-                    if (EquippedWeapon.MediumImpactSFX != null)
-                        AS.PlayOneShot(EquippedWeapon.MediumImpactSFX);
                     if (EquippedWeapon.MediumHitEffect != null)
                         Instantiate(EquippedWeapon.MediumHitEffect, hit.point, Quaternion.identity);
                     break;
@@ -956,12 +953,12 @@ public class PlayerController : MonoBehaviour
     {
         while (wep.CurrentAmmo < wep.MaxAmmo)
         {
+            if (ReloadSFX != null) GetComponent<AudioSource>().PlayOneShot(ReloadSFX);
             yield return new WaitForSeconds(reloadDuration);
             wep.CurrentAmmo = Mathf.Min(wep.CurrentAmmo + reloadAmount, wep.MaxAmmo);
             RemoveHUDAmmoCircles();
             UpdateHUDAmmoCircles(wep.CurrentAmmo, wep.MaxAmmo);
             FindObjectOfType<InventoryManager>().UpdateAmmoCount();
-            if (ReloadSFX != null) GetComponent<AudioSource>().PlayOneShot(ReloadSFX);
         }
         wep.CurrentlyReloading = false;
         if (EquippedWeaponModel.GetComponent<Animator>().GetCurrentAnimatorClipInfo(0)[0].clip.name == "Reload")

@@ -1358,6 +1358,9 @@ MonoBehaviour:
   player: {fileID: 0}
   GarbageCanObject: {fileID: 3172057608081470583, guid: 30063a3013b75e34eba00c0dc73c70b1, type: 3}
   GarbageObject: {fileID: 9072630313812858571, guid: 8222a4f79f7ca9b478d2871d7f94da0b, type: 3}
+  EquipSFX: {fileID: 8300000, guid: e08e03c8d7463c54497d6c87c8a02470, type: 3}
+  EquipIntroSFX: {fileID: 8300000, guid: fd3d6265985f1064c9763ddac151ad0a, type: 3}
+  SlamSFX: {fileID: 8300000, guid: 5aca6bce7b8353242b4ea833087fb789, type: 3}
 --- !u!1 &5859168172077053141
 GameObject:
   m_ObjectHideFlags: 0

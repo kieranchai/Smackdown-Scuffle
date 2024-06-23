@@ -17,14 +17,12 @@ public class SpecialWeapon : Weapon
 
     public override void PerformLightAttack(PlayerController player)
     {
-        player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
         player.PlayAnimation(LightAttackAnim);
         player.StartCoroutine(player.CastSpecial(AttackStrength.Light, LightAttackDelay));
     }
 
     public override void PerformMediumAttack(PlayerController player)
     {
-        player.GetComponent<AudioSource>().PlayOneShot(MediumAttackSFX);
         player.PlayAnimation(MediumAttackAnim);
         player.StartCoroutine(player.CastSpecial(AttackStrength.Medium, MediumAttackDelay));
     }
@@ -32,7 +30,6 @@ public class SpecialWeapon : Weapon
     public override void PerformHeavyAttack(PlayerController player)
     {
         player.PlayAnimation(HeavyAttackAnim);
-        player.GetComponent<AudioSource>().PlayOneShot(HeavyAttackSFX);
         player.StartCoroutine(player.CastSpecial(AttackStrength.Heavy, HeavyAttackDelay));
     }
 

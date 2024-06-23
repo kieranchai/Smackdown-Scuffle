@@ -43,10 +43,10 @@ MonoBehaviour:
   HeavyAttackAnim: {fileID: 7400000, guid: d21f4aef67c3cc54eab7a99ff85ef9c4, type: 2}
   ReloadAmount: 50
   MaxAmmo: 12
-  CurrentAmmo: 12
+  CurrentAmmo: 6
   LightAmmoCost: 1
   MediumAmmoCost: 3
   ReloadAnim: {fileID: 7400000, guid: f6b474fac85156846ba42424df5d414e, type: 2}
-  ReloadSFX: {fileID: 8300000, guid: 028065625a0f4ce41996e1d948e31fae, type: 3}
+  ReloadSFX: {fileID: 8300000, guid: fcd3eb7fdbeb7f544915f90b2307c972, type: 3}
   CurrentlyReloading: 0
   ReloadDuration: 1

@@ -18,6 +18,10 @@ public class GarbageBag : MonoBehaviour
     private bool hasDamagedEnemy = false;
     private bool hasSetFlicker = false;
 
+    private void Awake()
+    {
+    }
+
     private void Update()
     {
         if (hasCollided)
@@ -49,8 +53,6 @@ public class GarbageBag : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Level"))
         {
             hasCollided = true;
-            if (player.EquippedWeapon.LightImpactSFX != null)
-                player.AS.PlayOneShot(player.EquippedWeapon.LightImpactSFX);
             if (player.EquippedWeapon.LightHitEffect != null)
                 Instantiate(player.EquippedWeapon.LightHitEffect, collision.contacts[0].point, Quaternion.identity);
 
