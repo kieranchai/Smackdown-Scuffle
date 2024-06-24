@@ -57,15 +57,18 @@ public class InventoryManager : MonoBehaviour
             case WeaponType.Melee:
                 slot.transform.Find("Weapon").GetComponent<Image>().sprite = meleeWeapon;
                 slot.transform.Find("Ammo").GetComponent<TMP_Text>().text = "";
+                slot.transform.Find("Max Ammo").GetComponent<TMP_Text>().text = "";
                 break;
             case WeaponType.Ranged:
                 slot.transform.Find("Weapon").GetComponent<Image>().sprite = rangedWeapon;
                 RangedWeapon rweap = (RangedWeapon)FindObjectOfType<PlayerController>().EquippedWeapon;
-                slot.transform.Find("Ammo").GetComponent<TMP_Text>().text = $"{rweap.CurrentAmmo}/{rweap.MaxAmmo}";
+                slot.transform.Find("Ammo").GetComponent<TMP_Text>().text = $"{rweap.CurrentAmmo}";
+                slot.transform.Find("Max Ammo").GetComponent<TMP_Text>().text = $"/{rweap.MaxAmmo}";
                 break;
             case WeaponType.Special:
                 slot.transform.Find("Weapon").GetComponent<Image>().sprite = specialWeapon;
                 slot.transform.Find("Ammo").GetComponent<TMP_Text>().text = "";
+                slot.transform.Find("Max Ammo").GetComponent<TMP_Text>().text = "";
                 break;
         }
 
@@ -79,7 +82,8 @@ public class InventoryManager : MonoBehaviour
         PlayerController playerController = FindObjectOfType<PlayerController>();
         if (FindObjectOfType<PlayerController>().EquippedWeapon as RangedWeapon) {
             RangedWeapon rweap = (RangedWeapon)FindObjectOfType<PlayerController>().EquippedWeapon;
-            equippedPanel.transform.GetChild(0).gameObject.transform.Find("Ammo").GetComponent<TMP_Text>().text = $"{rweap.CurrentAmmo}/{rweap.MaxAmmo}";
+            equippedPanel.transform.GetChild(0).gameObject.transform.Find("Ammo").GetComponent<TMP_Text>().text = $"{rweap.CurrentAmmo}";
+            equippedPanel.transform.GetChild(0).gameObject.transform.Find("Max Ammo").GetComponent<TMP_Text>().text = $"/{rweap.MaxAmmo}";
         }
     }
 

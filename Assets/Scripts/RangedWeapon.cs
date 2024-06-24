@@ -34,7 +34,6 @@ public class RangedWeapon : Weapon
     public override void PerformLightAttack(PlayerController player)
     {
         StopReload();
-        player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
         player.PlayAnimation(LightAttackAnim);
         player.InitialiseGarbageScript();
         player.StartCoroutine(player.ResetAttackAfterDelay(LightAttackCooldown));
@@ -43,7 +42,6 @@ public class RangedWeapon : Weapon
     public override void PerformMediumAttack(PlayerController player)
     {
         StopReload();
-        player.GetComponent<AudioSource>().PlayOneShot(MediumAttackSFX);
         player.PlayAnimation(MediumAttackAnim);
         player.InitialiseGarbageScript();
         player.StartCoroutine(player.ResetAttackAfterDelay(MediumAttackCooldown));
@@ -58,7 +56,6 @@ public class RangedWeapon : Weapon
     IEnumerator HeavyAttack(PlayerController player)
     {
         player.PlayAnimation(HeavyAttackAnim);
-        player.GetComponent<AudioSource>().PlayOneShot(HeavyAttackSFX);
         player.InitialiseGarbageScript();
         yield return new WaitForSeconds(2f);
         CurrentlyReloading = true;

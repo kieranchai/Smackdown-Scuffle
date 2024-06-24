@@ -10,7 +10,6 @@ public class MeleeWeapon : Weapon
 
     public override void PerformLightAttack(PlayerController player)
     {
-        player.GetComponent<AudioSource>().PlayOneShot(LightAttackSFX);
         if (Type == WeaponType.Melee)
         {
             if (Random.Range(0, 2) == 0) player.PlayAnimation(LightAttackAnim);
@@ -25,7 +24,6 @@ public class MeleeWeapon : Weapon
 
     public override void PerformMediumAttack(PlayerController player)
     {
-        player.GetComponent<AudioSource>().PlayOneShot(MediumAttackSFX);
         player.PlayAnimation(MediumAttackAnim);
         player.InitialiseChairScript(AttackStrength.Medium, MediumAttackDamage);
         player.StartCoroutine(player.TargetImpact(AttackStrength.Medium, MediumAttackDelay));
@@ -35,7 +33,6 @@ public class MeleeWeapon : Weapon
     public override void PerformHeavyAttack(PlayerController player)
     {
         player.PlayAnimation(HeavyAttackAnim);
-        player.GetComponent<AudioSource>().PlayOneShot(HeavyAttackSFX);
         player.StartCoroutine(player.TargetImpact(AttackStrength.Heavy, HeavyAttackDelay));
         player.StartCoroutine(player.ResetAttackAfterDelay(HeavyAttackCooldown));
     }

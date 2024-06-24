@@ -17,10 +17,13 @@ public class Trashbin : MonoBehaviour
     private bool hasDamagedEnemy = false;
     private bool hasSetFlicker = false;
 
+    private AudioSource AS;
+
     private void Start()
     {
         _col = GetComponent<Collider>();
         _rb = GetComponent<Rigidbody>();
+        AS = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -61,8 +64,8 @@ public class Trashbin : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Level"))
         {
             hasCollided = true;
-            if (player.EquippedWeapon.HeavyImpactSFX != null)
-                player.AS.PlayOneShot(player.EquippedWeapon.HeavyImpactSFX);
+            AS.Play();
+            AS.volume /= 2;
             if (player.EquippedWeapon.HeavyHitEffect != null)
                 Instantiate(player.EquippedWeapon.HeavyHitEffect, collision.contacts[0].point, Quaternion.identity);
 

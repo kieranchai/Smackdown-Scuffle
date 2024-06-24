@@ -13,9 +13,33 @@ public class ChairEvents : MonoBehaviour
     public Collider _col;
     public bool hasHit = false;
 
+    public AudioClip woosh1SFX;
+    public AudioClip woosh2SFX;
+    public AudioClip dashSFX;
+    public AudioClip impact1SFX;
+    public AudioClip impact2SFX;
+    public AudioClip equipSFX;
+
+    private void Awake()
+    {
+        player = FindAnyObjectByType<PlayerController>();
+    }
+
+    public void PlayEquip()
+    {
+        player.AS.PlayOneShot(equipSFX);
+    }
+
+    public void PlayWoosh()
+    {
+        if (Random.Range(0, 2) == 0) player.AS.PlayOneShot(woosh1SFX);
+        else player.AS.PlayOneShot(woosh2SFX);
+    }
+
     public void MoveForward()
     {
         StartCoroutine(ForcedFwdMovement());
+        player.AS.PlayOneShot(dashSFX);
     }
 
     public System.Collections.IEnumerator ForcedFwdMovement()
@@ -34,8 +58,9 @@ public class ChairEvents : MonoBehaviour
         if (!hasHit)
         {
             hasHit = true;
-            if (player.EquippedWeapon.LightImpactSFX != null)
-                player.AS.PlayOneShot(player.EquippedWeapon.LightImpactSFX);
+            if (Random.Range(0, 2) == 0) player.AS.PlayOneShot(impact1SFX);
+            else player.AS.PlayOneShot(impact2SFX);
+
             if (player.EquippedWeapon.LightHitEffect != null)
             {
                 player.CameraShake(AttackStrength.Light);

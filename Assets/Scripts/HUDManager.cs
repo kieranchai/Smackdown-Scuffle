@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
 
 public class HUDManager : MonoBehaviour
 {
@@ -14,6 +13,8 @@ public class HUDManager : MonoBehaviour
     public Image Crosshair;
     public GameObject PlayerHPPanel;
     public GameObject StaminaPanel;
+    public GameObject KeysPanel;
+    public GameObject HealPanel;
 
     [Header("Melee HUD References")]
     public GameObject MeleeResourceObj;
@@ -25,6 +26,7 @@ public class HUDManager : MonoBehaviour
     public Image SpecialCooldownLight;
     public Image SpecialCooldownMedium;
     public Image SpecialCooldownHeavy;
+    public AudioClip beepSFX;
 
     [Header("Damage Taken References")]
     public Image Vignette_Left;
@@ -184,9 +186,11 @@ public class HUDManager : MonoBehaviour
         yield return null;
     }
 
-    public void SwitchHUD(WeaponType type)
+    public void SwitchHUD(Weapon weapon)
     {
-        SpecialResourceObj.SetActive(type == WeaponType.Special);
+        KeysPanel.SetActive(weapon.Type != WeaponType.Special);
+        SpecialResourceObj.SetActive(weapon.Type == WeaponType.Special);
+        Crosshair.gameObject.GetComponent<Animator>().Play("Intro");
     }
 
     public void UpdateResources(PlayerController player)
@@ -202,6 +206,7 @@ public class HUDManager : MonoBehaviour
                 {
                     hasFlashedLight = true;
                     SpecialCooldownLight.gameObject.transform.parent.GetComponent<Animator>().Play("Ready");
+                    player.AS.PlayOneShot(beepSFX);
                 }
                 else if (SpecialCooldownLight.fillAmount < 1 && hasFlashedLight)
                 {
@@ -213,6 +218,7 @@ public class HUDManager : MonoBehaviour
                 {
                     hasFlashedMedium = true;
                     SpecialCooldownMedium.gameObject.transform.parent.GetComponent<Animator>().Play("Ready");
+                    player.AS.PlayOneShot(beepSFX);
                 }
                 else if (SpecialCooldownMedium.fillAmount < 1 && hasFlashedMedium)
                 {
@@ -223,6 +229,7 @@ public class HUDManager : MonoBehaviour
                 {
                     hasFlashedHeavy = true;
                     SpecialCooldownHeavy.gameObject.transform.parent.GetComponent<Animator>().Play("Ready");
+                    player.AS.PlayOneShot(beepSFX);
                 }
                 else if (SpecialCooldownHeavy.fillAmount < 1 && hasFlashedHeavy)
                 {
@@ -320,20 +327,21 @@ public class HUDManager : MonoBehaviour
             Coroutine fadeOutCoroutine = StartCoroutine(FadeOutVignette(accumulatedFadeStrength, edge));
             fadeOutCoroutines[edge] = fadeOutCoroutine;
         }
-        else
-        {
-            foreach (KeyValuePair<Image, Coroutine> entry in fadeOutCoroutines)
-            {
-                if (entry.Value != null)
-                {
-                    StopCoroutine(entry.Value);
-                }
-            }
-        }
     }
 
     IEnumerator FadeOutVignette(float fadeStrength, Image edge)
     {
+        if (FindAnyObjectByType<PlayerController>())
+        {
+            PlayerController player = FindObjectOfType<PlayerController>();
+            if (player.CurrentHealth <= player.MaxHealth / 3)
+            {
+                fadeOutCoroutines.Remove(edge); // Remove coroutine from dictionary when done
+                accumulatedFadeStrengths.Remove(edge); // Remove fadeStrength from dictionary when done
+                yield break;
+            }
+        }
+
         float a = fadeStrength;
         while (edge.color.a > 0f)
         {
@@ -346,5 +354,10 @@ public class HUDManager : MonoBehaviour
 
         fadeOutCoroutines.Remove(edge); // Remove coroutine from dictionary when done
         accumulatedFadeStrengths.Remove(edge); // Remove fadeStrength from dictionary when done
+    }
+
+    public void PlayHealAnim()
+    {
+        HealPanel.GetComponent<Animator>().Play("Heal");
     }
 }

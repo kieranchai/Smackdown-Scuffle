@@ -1605,6 +1605,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5089537265164559858}
   - component: {fileID: 4887127813499396681}
+  - component: {fileID: 5321030600068650639}
   m_Layer: 7
   m_Name: Fists
   m_TagString: Untagged
@@ -1650,6 +1651,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5321030600068650639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8159811442855328829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4cff8347453c26499da154e39cbab25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countdownPopupPrefab: {fileID: 4152444550802736293, guid: 429a3f439198d224688ec39e7b6a0669, type: 3}
+  player: {fileID: 0}
+  swingSFX: {fileID: 8300000, guid: be5b4d69bf27a614b81cb186987ae0bd, type: 3}
 --- !u!1 &8420160788797716027
 GameObject:
   m_ObjectHideFlags: 0
