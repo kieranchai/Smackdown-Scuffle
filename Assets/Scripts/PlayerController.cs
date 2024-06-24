@@ -72,6 +72,12 @@ public class PlayerController : MonoBehaviour
     public AudioClip MediumDamageSFX;
     public AudioClip HeavyDamageSFX;
     public AudioClip DeathSFX;
+    public AudioClip MeleeHeavySFX;
+    public AudioClip MeleeMediumSFX;
+    public AudioClip chargeImpactSFX;
+    public AudioClip chokeSFX;
+    public AudioClip lowHealthSFX;
+    public AudioClip healingSFX;
 
     [Header("Debug Properties")]
     public KeyCode HealKey;
@@ -93,7 +99,9 @@ public class PlayerController : MonoBehaviour
     float decreaseFactor = 0.7f;
     bool camShake = false;
     bool isChoking = false;
-
+    AudioSource footstepsSFX;
+    AudioSource chargingSFX;
+    AudioSource heartBeatSFX;
     Vector3 originalPos;
 
     private void Awake()
@@ -107,6 +115,9 @@ public class PlayerController : MonoBehaviour
         EquipWeapon(WeaponInventory[0]);
         CurrentStamina = MaxStamina;
         chokeVignette = PostProcessVolume.profile.GetSetting<Vignette>();
+        footstepsSFX = transform.Find("Footsteps").GetComponent<AudioSource>();
+        chargingSFX = transform.Find("Charging").GetComponent<AudioSource>();
+        heartBeatSFX = transform.Find("Heartbeat").GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -139,6 +150,27 @@ public class PlayerController : MonoBehaviour
         HUD.UpdateStaminaBar(this);
         HandleResources();
         GetDebugInputs();
+        
+        // Footsteps
+        if (IsGrounded)
+        {
+            if (CC.velocity == Vector3.zero)
+            {
+                footstepsSFX.Stop();
+            } else
+            {
+                if (!footstepsSFX.isPlaying) footstepsSFX.Play();
+            }
+        } else
+        {
+            footstepsSFX.Stop();
+        }
+
+        if (CurrentHealth <= MaxHealth / 3)
+        {
+            if (!heartBeatSFX.isPlaying) heartBeatSFX.Play();
+        }
+        else heartBeatSFX.Stop();
 
         // UI
         CheckIfXHairOverEnemy();
@@ -594,6 +626,7 @@ public class PlayerController : MonoBehaviour
                     if (EquippedWeapon.Type == WeaponType.Melee)
                     {
                         Instantiate(medium_comicVFX, hit.point, Quaternion.identity);
+                        AS.PlayOneShot(MeleeMediumSFX);
                     }
                     if (EquippedWeapon.MediumHitEffect != null)
                         Instantiate(EquippedWeapon.MediumHitEffect, hit.point, Quaternion.identity);
@@ -602,6 +635,7 @@ public class PlayerController : MonoBehaviour
                     if (EquippedWeapon.Type == WeaponType.Melee)
                     {
                         CameraShake(AttackStrength.Heavy, false, 0, true, 0.8f);
+                        AS.PlayOneShot(MeleeHeavySFX);
                     }
                     if (EquippedWeapon.HeavyHitEffect != null)
                         Instantiate(EquippedWeapon.HeavyHitEffect, hit.point, Quaternion.identity);
@@ -653,6 +687,7 @@ public class PlayerController : MonoBehaviour
         float chargeTime = 0f;
         chargeParticles.Play();
         speedLines.Play();
+        chargingSFX.Play();
         while (!hitObstacle && chargeTime < 0.5f)
         {
             PlayerCamera.fieldOfView -= 20f * Time.deltaTime;
@@ -661,6 +696,7 @@ public class PlayerController : MonoBehaviour
             chargeTime += Time.deltaTime;
             yield return null;
         }
+        chargingSFX.Stop();
         chargeParticles.Stop();
         speedLines.Stop();
         PlayerCamera.fieldOfView = 75f;
@@ -691,6 +727,8 @@ public class PlayerController : MonoBehaviour
             CameraShake(AttackStrength.Light, true, 3f, true, 0.05f);
             isChoking = true;
             float initialCamFOV = PlayerCamera.fieldOfView;
+            AS.clip = chokeSFX;
+            AS.Play();
             while (chokeTime < 3.9f)
             {
                 if (chokeTime >= 3.7f)
@@ -698,6 +736,7 @@ public class PlayerController : MonoBehaviour
                     isChoking = false;
                     PlayerCamera.fieldOfView += 7.0f * Time.deltaTime;
                     PlayerCamera.fieldOfView = Mathf.Max(PlayerCamera.fieldOfView, initialCamFOV);
+                    AS.Stop();
                 }
                 else PlayerCamera.fieldOfView -= 1.5f * Time.deltaTime;
                 chokeTime += Time.deltaTime;
@@ -755,6 +794,7 @@ public class PlayerController : MonoBehaviour
             switch (strength)
             {
                 case AttackStrength.Light:
+                    AS.PlayOneShot(chargeImpactSFX);
                     CameraShake(AttackStrength.Medium);
                     if (EquippedWeapon.LightHitEffect != null)
                         Instantiate(EquippedWeapon.LightHitEffect, hit.point, Quaternion.identity);
@@ -971,6 +1011,7 @@ public class PlayerController : MonoBehaviour
     {
         CurrentHealth += healAmount;
         if (CurrentHealth >= MaxHealth / 3) HUD.FadeOutLowHealth();
+        AS.PlayOneShot(healingSFX);
         HUD.PlayHealAnim();
         HUD.lerpTimer = 0f;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);

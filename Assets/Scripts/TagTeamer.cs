@@ -18,14 +18,27 @@ public class TagTeamer : MonoBehaviour
     [SerializeField]
     private ParticleSystem speedLinesVFX;
 
+    private AudioSource AS;
+
+    public AudioClip poofSFX;
+    public AudioClip fallingSFX;
+    public AudioClip explosionSFX;
+
     private void Start()
     {
         GetComponent<Animator>().Play("Slam");
         rb = GetComponent<Rigidbody>();
+        AS = GetComponent<AudioSource>();
+        AS.PlayOneShot(poofSFX);
+        AS.clip = fallingSFX;
+        AS.Play();
+        AS.loop = true;
     }
 
     public void Landed()
     {
+        AS.Stop();
+        AS.PlayOneShot(explosionSFX);
         Instantiate(comicExplosionVFX, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
         Instantiate(explosionVFX, transform.position, Quaternion.identity);
         rb.isKinematic = true;

@@ -233,12 +233,12 @@ MonoBehaviour:
   damage: 0
   _col: {fileID: 0}
   hasHit: 0
-  EquipSFX: {fileID: 8300000, guid: 2975d6fb072087847b53ac8b70201a5e, type: 3}
-  WooshSFX: {fileID: 8300000, guid: 3b6f0c86cc405754aa6ac6288f170947, type: 3}
-  Woosh2SFX: {fileID: 8300000, guid: 3768ecdfc8e58e04f82abee43e20bb0c, type: 3}
-  LightImpactSFX: {fileID: 8300000, guid: 243db846b55c9a140b646f03c3e24156, type: 3}
-  LightImpact2SFX: {fileID: 0}
-  LightImpact3SFX: {fileID: 0}
+  woosh1SFX: {fileID: 8300000, guid: 587708f6cf2723a4fa6a144116eccd8b, type: 3}
+  woosh2SFX: {fileID: 8300000, guid: f5e459db8eecdcf498a3780be916332e, type: 3}
+  dashSFX: {fileID: 8300000, guid: df26e4d606f772c4fbc8872f59711b12, type: 3}
+  impact1SFX: {fileID: 0}
+  impact2SFX: {fileID: 0}
+  equipSFX: {fileID: 8300000, guid: 29d4e8b2fef2a36429f5243d1f348608, type: 3}
 --- !u!1 &1103574939226161716
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,12 +934,12 @@ MonoBehaviour:
   damage: 0
   _col: {fileID: 4655333561147353957}
   hasHit: 0
-  EquipSFX: {fileID: 0}
-  WooshSFX: {fileID: 0}
-  Woosh2SFX: {fileID: 0}
-  LightImpactSFX: {fileID: 8300000, guid: 243db846b55c9a140b646f03c3e24156, type: 3}
-  LightImpact2SFX: {fileID: 8300000, guid: 981a6e6614312c64d8721aa7c35cbf14, type: 3}
-  LightImpact3SFX: {fileID: 8300000, guid: fde84c4d10808d84e8008ab0160f2d07, type: 3}
+  woosh1SFX: {fileID: 0}
+  woosh2SFX: {fileID: 0}
+  dashSFX: {fileID: 0}
+  impact1SFX: {fileID: 8300000, guid: edac9397bd09cc54d8deaff0591f4804, type: 3}
+  impact2SFX: {fileID: 8300000, guid: cd1a9e410fac52a4eb67fb22d9b9935b, type: 3}
+  equipSFX: {fileID: 0}
 --- !u!1 &4202403739049204647
 GameObject:
   m_ObjectHideFlags: 0

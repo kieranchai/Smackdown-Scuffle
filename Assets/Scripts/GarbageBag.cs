@@ -6,6 +6,7 @@ public class GarbageBag : MonoBehaviour
 {
     private Collider _col;
     private Rigidbody _rb;
+    private AudioSource AS;
 
     [SerializeField]
     private Material flickerMat;
@@ -20,6 +21,7 @@ public class GarbageBag : MonoBehaviour
 
     private void Awake()
     {
+        AS = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -53,6 +55,9 @@ public class GarbageBag : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Level"))
         {
             hasCollided = true;
+            AS.Play();
+            AS.volume /= 2;
+
             if (player.EquippedWeapon.LightHitEffect != null)
                 Instantiate(player.EquippedWeapon.LightHitEffect, collision.contacts[0].point, Quaternion.identity);
 

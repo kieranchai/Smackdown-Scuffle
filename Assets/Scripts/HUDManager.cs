@@ -26,6 +26,7 @@ public class HUDManager : MonoBehaviour
     public Image SpecialCooldownLight;
     public Image SpecialCooldownMedium;
     public Image SpecialCooldownHeavy;
+    public AudioClip beepSFX;
 
     [Header("Damage Taken References")]
     public Image Vignette_Left;
@@ -205,6 +206,7 @@ public class HUDManager : MonoBehaviour
                 {
                     hasFlashedLight = true;
                     SpecialCooldownLight.gameObject.transform.parent.GetComponent<Animator>().Play("Ready");
+                    player.AS.PlayOneShot(beepSFX);
                 }
                 else if (SpecialCooldownLight.fillAmount < 1 && hasFlashedLight)
                 {
@@ -216,6 +218,7 @@ public class HUDManager : MonoBehaviour
                 {
                     hasFlashedMedium = true;
                     SpecialCooldownMedium.gameObject.transform.parent.GetComponent<Animator>().Play("Ready");
+                    player.AS.PlayOneShot(beepSFX);
                 }
                 else if (SpecialCooldownMedium.fillAmount < 1 && hasFlashedMedium)
                 {
@@ -226,6 +229,7 @@ public class HUDManager : MonoBehaviour
                 {
                     hasFlashedHeavy = true;
                     SpecialCooldownHeavy.gameObject.transform.parent.GetComponent<Animator>().Play("Ready");
+                    player.AS.PlayOneShot(beepSFX);
                 }
                 else if (SpecialCooldownHeavy.fillAmount < 1 && hasFlashedHeavy)
                 {
